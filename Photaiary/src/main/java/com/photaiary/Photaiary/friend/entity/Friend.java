@@ -7,7 +7,6 @@ import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 
-
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
