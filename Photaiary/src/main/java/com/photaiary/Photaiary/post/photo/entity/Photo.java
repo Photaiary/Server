@@ -1,5 +1,7 @@
 package com.photaiary.Photaiary.post.photo.entity;
 
+import com.photaiary.Photaiary.post.daily.Daily;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
@@ -11,21 +13,33 @@ import javax.persistence.*;
 @Getter
 public class Photo {
     @Id
-    Long photoIndex;
+    private Long photoIndex;
     @ManyToOne
     @JoinColumn(name="dailyIndex", insertable = false, updatable = false)
-    Daily daily;
+    private Daily daily;
     @Column
-    String latitude;
+    private String latitude;
     @Column
-    String longitude;
+    private String longitude;
     @Column
-    String image;
+    private String image;
     @Column
-    String comment;
+    private String comment;
     @ColumnDefault("exist")
     @Enumerated(EnumType.STRING)
-    DeleteStatus status;
+    private DeleteStatus status;
     @Column(length=9)
-    String tag;
+    private String tag;
+
+    @Builder
+    public Photo(Long photoIndex, Daily daily, String latitude, String longitude, String image, String comment, DeleteStatus status, String tag) {
+        this.photoIndex = photoIndex;
+        this.daily = daily;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.image = image;
+        this.comment = comment;
+        this.status = status;
+        this.tag = tag;
+    }
 }

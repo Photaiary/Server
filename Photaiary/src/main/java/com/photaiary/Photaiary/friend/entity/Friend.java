@@ -9,26 +9,26 @@ import javax.persistence.*;
 
 @Getter
 @NoArgsConstructor
-@AllArgsConstructor
-@Builder
 @Entity
 public class Friend{
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     @NotNull
-    private int Index;
+    @Column(name="friendIndex")
+    private Long Index;
 
 
-    @JoinColumn(name="userIndex")
+    @ManyToOne
+    @JoinColumn(name="userIndex", insertable = false, updatable = false)
     @NotNull
     private User userIndex;
 
-    @JoinColumn(name="userIndex")
+    @ManyToOne
+    @JoinColumn(name="userIndex", insertable = false, updatable = false)
     @NotNull
-    private User friendIndex;
+    private User otherIndex;
 
     @ColumnDefault("active")
     @Enumerated(EnumType.STRING)
     private StatusType status;
-
 }

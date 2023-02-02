@@ -1,4 +1,5 @@
 package com.photaiary.Photaiary.post.daily;
+import com.photaiary.Photaiary.user.entity.User;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
