@@ -1,7 +1,8 @@
-package com.photaiary.Photaiary.post.photo;
+package com.photaiary.Photaiary.post.photo.entity;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 
@@ -22,8 +23,9 @@ public class Photo {
     String image;
     @Column
     String comment;
-    @Column
-    String status;
-    @Column
+    @ColumnDefault("exist")
+    @Enumerated(EnumType.STRING)
+    DeleteStatus status;
+    @Column(length=9)
     String tag;
 }
