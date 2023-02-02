@@ -37,4 +37,7 @@ public class Friend{
         this.friendIndex=friendIndex;
         this.status=status;
     }
+
+
+
 }
