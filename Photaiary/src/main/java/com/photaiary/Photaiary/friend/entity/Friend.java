@@ -1,11 +1,11 @@
 package com.photaiary.Photaiary.friend.entity;
 
 import com.photaiary.Photaiary.user.entity.User;
-import com.sun.istack.NotNull;
 import lombok.*;
-import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
+
+import static javax.persistence.FetchType.LAZY;
 
 @Getter
 @NoArgsConstructor
@@ -13,22 +13,19 @@ import javax.persistence.*;
 public class Friend{
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
-    @NotNull
-    @Column(name="friendIndex")
-    private Long Index;
+//    @Column(name="friend_index")
+    @Column
+    private Long index;
 
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(referencedColumnName = "user_index", nullable = false, name="from_user")
+    private User fromUser;
 
-    @ManyToOne
-    @JoinColumn(name="userIndex", insertable = false, updatable = false)
-    @NotNull
-    private User userIndex;
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(referencedColumnName = "user_index", nullable = false, name="to_user")
+    private User toUser;
 
-    @ManyToOne
-    @JoinColumn(name="userIndex", insertable = false, updatable = false)
-    @NotNull
-    private User otherIndex;
-
-    @ColumnDefault("active")
     @Enumerated(EnumType.STRING)
+    @Column(columnDefinition = "varchar(9) default 'ACTIVE'")
     private StatusType status;
 }

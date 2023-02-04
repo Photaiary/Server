@@ -13,9 +13,10 @@ import javax.persistence.*;
 @Getter
 public class Photo {
     @Id
+    @GeneratedValue
     private Long photoIndex;
     @ManyToOne
-    @JoinColumn(name="dailyIndex", insertable = false, updatable = false)
+    @JoinColumn(name="dailyIndex")
     private Daily daily;
     @Column
     private String latitude;
@@ -25,21 +26,21 @@ public class Photo {
     private String image;
     @Column
     private String comment;
-    @ColumnDefault("exist")
+    @Column(name="deleteStatus", columnDefinition = "varchar(9) default 'exist'")
     @Enumerated(EnumType.STRING)
-    private DeleteStatus status;
+    private DeleteStatus deleteStatus;
     @Column(length=9)
     private String tag;
 
     @Builder
-    public Photo(Long photoIndex, Daily daily, String latitude, String longitude, String image, String comment, DeleteStatus status, String tag) {
+    public Photo(Long photoIndex, Daily daily, String latitude, String longitude, String image, String comment, DeleteStatus deleteStatus, String tag) {
         this.photoIndex = photoIndex;
         this.daily = daily;
         this.latitude = latitude;
         this.longitude = longitude;
         this.image = image;
         this.comment = comment;
-        this.status = status;
+        this.deleteStatus = deleteStatus;
         this.tag = tag;
     }
 }

@@ -1,5 +1,6 @@
 package com.photaiary.Photaiary.post.daily;
 import com.photaiary.Photaiary.user.entity.User;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -15,14 +16,17 @@ public class Daily {
     @Column(name="dailyIndex")
     private Long dailyIndex;
 
-    @Column(name="userIndex",nullable = false)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long userIndex;
-
-    @Column(name = "daily",nullable = false)
-    private String daily;
-
     @ManyToOne
-    @JoinColumn(name = "userIndex", insertable = false, updatable = false)
+    @JoinColumn(name = "userIndex")
     private User user;
+
+    @Column(name = "dailyValue")
+    private String dailyValue;
+
+    @Builder
+    public Daily(Long dailyIndex, User user, String dailyValue) {
+        this.dailyIndex = dailyIndex;
+        this.user = user;
+        this.dailyValue = dailyValue;
+    }
 }

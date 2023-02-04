@@ -2,6 +2,7 @@ package com.photaiary.Photaiary.user.entity;
 
 import com.photaiary.Photaiary.friend.entity.Friend;
 import com.photaiary.Photaiary.friend.entity.StatusType;
+import com.photaiary.Photaiary.post.daily.Daily;
 import com.photaiary.Photaiary.post.photo.entity.Photo;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,7 +19,7 @@ import java.util.List;
 public class User extends BaseTimeEntity {
     @Id
     @GeneratedValue
-    @Column(name = "userIndex")
+    @Column(name = "user_index", insertable = false, updatable = false)
     private Long userIndex;
 
     @Column
@@ -29,18 +30,17 @@ public class User extends BaseTimeEntity {
     private String nickname;
     @Column(length = 8)
     private String birthday;
-    @Column(nullable = true)
+    @Column
     private String profileImage;
 
     @Column
     LocalDateTime deletedAt;
-    @Column
-    @ColumnDefault("active")
+    @Column(name = "ROLE", columnDefinition = "varchar(8) default 'active'")
     private StatusType status;
-    @ColumnDefault("blue")
+    @Column(name = "theme", columnDefinition = "varchar(8) default 'blue'")
     @Enumerated(EnumType.STRING)
     private ThemeType theme;
 
-//    @OneToMany(mappedBy = "user")
-//    private List<Friend> friends = new ArrayList<>();
+    @OneToMany(mappedBy = "user")
+    private List<Daily> dailies = new ArrayList<>();
 }
