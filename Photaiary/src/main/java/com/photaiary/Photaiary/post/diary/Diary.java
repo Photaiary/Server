@@ -15,7 +15,7 @@ public class Diary {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long diaryIndex;
     @OneToOne
-    @JoinColumn(name = "dailyIndex")
+    @JoinColumn(name = "daily_index")
     private Daily daily;
     @Column
     private String diaryTitle;

@@ -1,4 +1,5 @@
 package com.photaiary.Photaiary.post.daily;
+
 import com.photaiary.Photaiary.user.entity.User;
 import lombok.Builder;
 import lombok.Getter;
@@ -13,7 +14,7 @@ public class Daily {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="dailyIndex")
+    @Column(name = "dailyIndex")
     private Long dailyIndex;
 
     @ManyToOne
