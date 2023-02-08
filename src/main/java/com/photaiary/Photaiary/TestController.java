@@ -15,6 +15,11 @@ import java.util.Map;
 @RestController
 public class TestController {
 
+    @GetMapping("/test/docker")
+    public String dockerTest(){
+        return "hi";
+    }
+
     @GetMapping("/test/{hi}")
     public ResponseEntity<DefaultRes> test(@PathVariable String hi) {
         Map<Integer, String> map = new HashMap<>();
