@@ -20,6 +20,11 @@ public class TestController {
         return "hi";
     }
 
+    @GetMapping("/test/webhook")
+    public String webhookTest(){
+        return "webhook";
+    }
+
     @GetMapping("/test/{hi}")
     public ResponseEntity<DefaultRes> test(@PathVariable String hi) {
         Map<Integer, String> map = new HashMap<>();
