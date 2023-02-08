@@ -40,7 +40,7 @@ public class DiaryService {
     }
 
     @Transactional
-    public Diary updateByIdAndDiaryIndex(Long dailyIndex, DiaryPostRequestDto requestDto) {
+    public Diary updateByIdAndDiaryIndex(Long dailyIndex, DiaryUpdateRequestDto requestDto) {
         Diary foundDiary = repository.findById(dailyIndex).get();
 
         if(foundDiary.getDiaryTitle() != null || foundDiary.getDiaryContent() != null) {
