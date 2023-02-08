@@ -17,7 +17,7 @@ public class TestController {
 
     @GetMapping("/test/docker")
     public String dockerTest(){
-        return "hi";
+        return "진짜 마지막 도커 테스트";
     }
 
     @GetMapping("/test/webhook")
