@@ -37,7 +37,6 @@ public class PostController {
             data.put("success", "true");
             response.put(status, data);
         }
-
         return response;
     }
 
