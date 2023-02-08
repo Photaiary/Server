@@ -1,10 +1,9 @@
 package com.photaiary.Photaiary.post.photo.entity;
 
-import com.photaiary.Photaiary.post.daily.Daily;
+import com.photaiary.Photaiary.post.daily.entity.Daily;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 
@@ -13,8 +12,8 @@ import javax.persistence.*;
 @Getter
 public class Photo {
     @Id
-    @GeneratedValue
-    private Long photoIndex;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     @ManyToOne
     @JoinColumn(name="dailyIndex")
     private Daily daily;
@@ -33,8 +32,8 @@ public class Photo {
     private String tag;
 
     @Builder
-    public Photo(Long photoIndex, Daily daily, String latitude, String longitude, String image, String comment, DeleteStatus deleteStatus, String tag) {
-        this.photoIndex = photoIndex;
+    public Photo(Long id, Daily daily, String latitude, String longitude, String image, String comment, DeleteStatus deleteStatus, String tag) {
+        this.id = id;
         this.daily = daily;
         this.latitude = latitude;
         this.longitude = longitude;
