@@ -1,8 +1,10 @@
 package com.photaiary.Photaiary.user.entity;
 
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.DynamicInsert;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -15,6 +17,8 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EntityListeners(AuditingEntityListener.class)
+@DynamicInsert
+
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)    // AUTO_INCREMENT
@@ -26,15 +30,18 @@ public class User {
 
     @Column
     private String password;
-    @Column
+
+    @Column(unique = true)
     private String nickname;
+
     @Column
     private String name;
 
     @Column(length = 8)
     private String birthdate;
+
     @Column
-    private String profileImage;
+    private String profileImage; //기본값 감자이미지.
 
     @CreatedDate
     @Column(updatable = false)
@@ -46,5 +53,19 @@ public class User {
 
     @Enumerated(EnumType.STRING)
     @Column(columnDefinition = "varchar(9) default 'ACTIVE'")
-    private Status status;
+    private StatusType status;
+
+
+    @Builder
+    public User(String email, String password, String nickname, String name, String birthdate,
+                String profileImage){
+
+        this.email=email;
+        this.password=password;
+        this.nickname=nickname;
+        this.name=name;
+        this.birthdate=birthdate;
+        this.profileImage=profileImage;
+    }
+
 }
