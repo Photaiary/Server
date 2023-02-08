@@ -38,6 +38,17 @@ public class DiaryService {
 
         return repository.save(requestDto.toEntity());
     }
+
+    @Transactional
+    public Diary updateByIdAndDiaryIndex(Long dailyIndex, DiaryPostRequestDto requestDto) {
+        Diary foundDiary = repository.findById(dailyIndex).get();
+
+        if(foundDiary.getDiaryTitle() != null || foundDiary.getDiaryContent() != null) {
+            foundDiary.update(requestDto.getDiaryTitle(),requestDto.getDiaryContent() );
+            return foundDiary;
+        }
+        return null;
+    }
 //    public List<Diary> findAll(){
 //        return repository.findAll();
 //    }
