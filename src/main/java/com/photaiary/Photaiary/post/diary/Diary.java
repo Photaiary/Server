@@ -1,6 +1,6 @@
 package com.photaiary.Photaiary.post.diary;
 
-import com.photaiary.Photaiary.post.daily.Daily;
+import com.photaiary.Photaiary.post.daily.entity.Daily;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
