@@ -15,6 +15,11 @@ public class PhotoRequest {
     private DeleteStatus deleteStatus;
     private String tag;
 
+    public void updateLocation(String latitude, String longitude) {
+        this.latitude = latitude;
+        this.longitude = longitude;
+    }
+
     @Builder
     public PhotoRequest(Long dailyId, String latitude, String longitude, String image, String comment, DeleteStatus deleteStatus, String tag) {
         this.dailyId = dailyId;

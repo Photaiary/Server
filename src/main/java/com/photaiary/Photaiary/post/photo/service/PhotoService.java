@@ -1,6 +1,8 @@
 package com.photaiary.Photaiary.post.photo.service;
 
 import com.photaiary.Photaiary.post.daily.entity.Daily;
+import com.photaiary.Photaiary.post.daily.repository.DailyReposiotry;
+import com.photaiary.Photaiary.post.photo.dto.EditRequest;
 import com.photaiary.Photaiary.post.photo.dto.PhotoRequest;
 import com.photaiary.Photaiary.post.photo.entity.Photo;
 import com.photaiary.Photaiary.post.photo.repository.PhotoRepository;
@@ -14,14 +16,11 @@ import java.util.Optional;
 @Service
 public class PhotoService {
     private final PhotoRepository photoRepository;
+    private final DailyReposiotry dailyReposiotry;
 
     @Transactional
     public Long photoSave(PhotoRequest photoRequest) {
-//        Optional<Daily>daily = jpaDailyRepository.findById(photoRequest.getDailyId());
-        Optional<Daily> daily = Optional.of(new Daily()
-                .builder()
-                .dailyIndex(photoRequest.getDailyId())
-                .build());
+        Optional<Daily> daily = dailyReposiotry.findById(photoRequest.getDailyId());
         try {
             if (daily.isPresent()) {
                 Photo photo = new Photo()
@@ -39,11 +38,35 @@ public class PhotoService {
                 System.out.println("empty");
                 return -1000L;
             } else {
-                return -999L;
+                return -900L;
             }
         } catch (Exception e) {
             System.out.println(e);
-            return 11111111111111L;
+            return -800L;
         }
     }
+
+    @Transactional
+    public Long photoEdit(EditRequest editRequest) {
+        Optional<Photo> photo = photoRepository.findById(editRequest.getPhotoIndex());
+        try {
+            if (photo.isPresent()) {
+                photo.get().editTag(editRequest.getTag());
+                photo.get().editComment(editRequest.getComment());
+                photoRepository.save(photo.get());
+                return photo.get().getId();
+            } else if (photo.isEmpty()) {
+                return -1000L;
+            } else {
+                return -900L;
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+            return -800L;
+        }
+    }
+
+//    private Map<String, String> photoLocation() {
+//
+//    }
 }
