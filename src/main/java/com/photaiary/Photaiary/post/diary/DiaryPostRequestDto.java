@@ -17,6 +17,7 @@ public class DiaryPostRequestDto {  //Controller와 Service 사이에서 사용�
     public DiaryPostRequestDto(String diaryTitle, String diaryContent, Daily daily) {
         this.diaryTitle = diaryTitle;
         this.diaryContent = diaryContent;
+
         this.daily = daily;
     }
 
