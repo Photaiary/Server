@@ -6,5 +6,62 @@ script: "./gradlew clean build"
 before_install:
   - chmod +x gradlew
 
+spring:
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 50MB
+
+  application:
+    name: demo
+
+  h2:
+    console:
+      enabled: true
+      path: /h2-console  # http://localhost:8080/h2-console
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driver-class-name: org.h2.Driver
+    username: sa
+  jpa:
+    properties:
+      hibernate:
+        format_sql: true # 실행되는 query를 보여줌
+    hibernate:
+      ddl-auto: update
+  sql:
+    init:
+      continue-on-error: true
+
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+
 logging.level:
   org.hibernate.SQL: debug
+
+logging:
+  level:
+    com:
+      amazonaws:
+        util:
+          EC2MetadataUtils: error
+
+jasypt:
+  encryptor:
+    bean: jasyptStringEncryptor
+    password : 1234
+
+cloud:
+  aws:
+    s3:
+      bucket: photaiary-bucket
+      dir:
+    credentials:
+      access-key: ENC(jgbYCw9faOVfKlXwHMs4GnOTRrFm5UgWfGSdDhIcXpE=)
+      secret-key: ENC(w3a6gpyKp0OKrwzFX0FRVkV+8+0gDI+NQvyrtkljJe0FKJu7auFhTbKDKYrmIqO0ZgGtQm7+HKE=)
+    region:
+      static: ap-northeast-2
+      auto: false
+    stack:
+      auto: false
