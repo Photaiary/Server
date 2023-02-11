@@ -2,10 +2,12 @@ package com.photaiary.Photaiary.user.service;
 
 import com.photaiary.Photaiary.user.dto.IdCheckRequestDto;
 import com.photaiary.Photaiary.user.dto.UserSaveRequestDto;
+
 import com.photaiary.Photaiary.user.entity.User;
 import com.photaiary.Photaiary.user.entity.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,6 +20,10 @@ public class UserService {
 
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+
 
 
     @Transactional
@@ -32,6 +38,10 @@ public class UserService {
     public int save(UserSaveRequestDto requestDto){
 
        User result= userRepository.save(requestDto.toEntity());
+//        Authority authority=Authority.builder()
+//                .authorityName("ROLE_USER")
+//                .build();
+
        if(result.getNickname()==requestDto.toEntity().getNickname())
            return 0;
        else return 1;

@@ -4,19 +4,28 @@ import com.photaiary.Photaiary.user.dto.*;
 import com.photaiary.Photaiary.user.service.UserService;
 import com.photaiary.Photaiary.user.validation.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.config.annotation.authentication
+        .builders.AuthenticationManagerBuilder;
 
+import javax.validation.Valid;
 import java.util.Map;
 
 
 @RestController
 public class UserController {
 
+
     @Autowired
     private UserService userService;
 
     @Autowired
     private EmailService emailService;
+
+
 
     @PostMapping("/user/signup")
     public ResponseDto signup(@RequestBody UserSaveRequestDto requestDto){
@@ -41,6 +50,7 @@ public class UserController {
 
         return new EmailCheckResponseDto(true,authCode);
     }
+
 
 
 }

@@ -1,5 +1,6 @@
 package com.photaiary.Photaiary.user.entity;
 
+
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -12,6 +13,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import javax.persistence.*;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -54,6 +56,14 @@ public class User {
     @Enumerated(EnumType.STRING)
     @Column(columnDefinition = "varchar(9) default 'ACTIVE'")
     private StatusType status;
+
+    @ManyToMany
+    @JoinTable(
+            name="user_authority",
+            joinColumns = {@JoinColumn(name="user_index",referencedColumnName = "user_index")},
+            inverseJoinColumns = {@JoinColumn(name="authority_name",referencedColumnName = "authority_name")}
+    )
+    private Set<Authority> authorities;
 
 
     @Builder
