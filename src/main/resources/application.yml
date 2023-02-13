@@ -21,3 +21,7 @@ jwt:
   secret:
     key: VlwEyVBsYt9V7zq57TejMnVUyzblYcfPQye08f7MGVA9XkHa
   token-validity-in-seconds: 86400
+
+redis:
+  host: local
+  port: 6379

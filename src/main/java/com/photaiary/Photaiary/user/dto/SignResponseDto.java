@@ -2,6 +2,7 @@ package com.photaiary.Photaiary.user.dto;
 
 import com.photaiary.Photaiary.user.entity.Authority;
 import com.photaiary.Photaiary.user.entity.User;
+import com.photaiary.Photaiary.user.security.TokenDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -27,7 +28,7 @@ public class SignResponseDto{
 
     private List<Authority> roles = new ArrayList<>();
 
-    private String token;
+    private TokenDto token;
 
     public SignResponseDto(User user) {
         this.user_index= user.getUserIndex();

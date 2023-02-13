@@ -5,6 +5,7 @@ import com.photaiary.Photaiary.user.dto.ResponseDto;
 import com.photaiary.Photaiary.user.dto.SignRequestDto;
 import com.photaiary.Photaiary.user.dto.SignResponseDto;
 import com.photaiary.Photaiary.user.entity.UserRepository;
+import com.photaiary.Photaiary.user.security.TokenDto;
 import com.photaiary.Photaiary.user.service.SignService;
 import com.photaiary.Photaiary.user.validation.EmailService;
 import lombok.RequiredArgsConstructor;
@@ -38,6 +39,11 @@ public class UserController {
         return new ResponseEntity<>(signService.register(request), HttpStatus.OK);
     }
 
+    //refresh토큰으로 access토큰 재발급 요청
+    @GetMapping("/refresh")
+    public ResponseEntity<TokenDto> refresh(@RequestBody TokenDto token) throws Exception {
+        return new ResponseEntity<>( signService.refreshAccessToken(token), HttpStatus.OK);
+    }
     @GetMapping("/user/get")
     public ResponseEntity<SignResponseDto> getUser(@RequestParam String account) throws Exception {
         return new ResponseEntity<>( signService.getUser(account), HttpStatus.OK);
