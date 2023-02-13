@@ -1,49 +1,63 @@
 package com.photaiary.Photaiary.user;
 
-import com.photaiary.Photaiary.user.dto.*;
-import com.photaiary.Photaiary.user.service.UserService;
+import com.photaiary.Photaiary.user.dto.EmailCheckResponseDto;
+import com.photaiary.Photaiary.user.dto.ResponseDto;
+import com.photaiary.Photaiary.user.dto.SignRequestDto;
+import com.photaiary.Photaiary.user.dto.SignResponseDto;
+import com.photaiary.Photaiary.user.entity.UserRepository;
+import com.photaiary.Photaiary.user.service.SignService;
 import com.photaiary.Photaiary.user.validation.EmailService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.security.config.annotation.authentication
-        .builders.AuthenticationManagerBuilder;
 
-import javax.validation.Valid;
 import java.util.Map;
 
 
 @RestController
+@RequiredArgsConstructor
 public class UserController {
 
 
-    @Autowired
-    private UserService userService;
+    private final EmailService emailService;
 
-    @Autowired
-    private EmailService emailService;
+    private final SignService signService;
+
+    private final UserRepository userRepository;
 
 
 
-    @PostMapping("/user/signup")
-    public ResponseDto signup(@RequestBody UserSaveRequestDto requestDto){
-        int result=userService.save(requestDto);
-        if (result==0)
-            return new ResponseDto(true);
-        else return new ResponseDto(false);
+    @PostMapping(value = "/login")
+    public ResponseEntity<SignResponseDto> signin(@RequestBody SignRequestDto request) throws Exception {
+        return new ResponseEntity<>(signService.login(request), HttpStatus.OK);
     }
 
-    @PostMapping("/user/login/duplicationCheck")
+    @PostMapping(value = "/register")
+    public ResponseEntity<Boolean> signup(@RequestBody SignRequestDto request) throws Exception {
+        return new ResponseEntity<>(signService.register(request), HttpStatus.OK);
+    }
+
+    @GetMapping("/user/get")
+    public ResponseEntity<SignResponseDto> getUser(@RequestParam String account) throws Exception {
+        return new ResponseEntity<>( signService.getUser(account), HttpStatus.OK);
+    }
+
+    @GetMapping("/admin/get")
+    public ResponseEntity<SignResponseDto> getUserForAdmin(@RequestParam String account) throws Exception {
+        return new ResponseEntity<>( signService.getUser(account), HttpStatus.OK);
+    }
+
+
+    @PostMapping("/login/duplicationCheck")
     public ResponseDto idChk(@RequestBody Map<String,String> nicknameMap){
-        int result=userService.idChk(nicknameMap.get("nickname"));
+        int result=signService.idChk(nicknameMap.get("nickname"));
         if (result==0)
             return new ResponseDto(true);
         else return new ResponseDto(false);
     }
 
-    @PostMapping("/user/emailCheck")
+    @PostMapping("/emailCheck")
     public EmailCheckResponseDto emailCheck(@RequestBody Map<String,String> emailMap) throws Exception {
 
         String authCode=emailService.sendEmail(emailMap.get("email"));

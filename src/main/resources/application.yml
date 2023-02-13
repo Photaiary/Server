@@ -18,5 +18,6 @@ spring:
             enable: true
           auth: true
 jwt:
-  secret: VlwEyVBsYt9V7zq57TejMnVUyzblYcfPQye08f7MGVA9XkHa
+  secret:
+    key: VlwEyVBsYt9V7zq57TejMnVUyzblYcfPQye08f7MGVA9XkHa
   token-validity-in-seconds: 86400

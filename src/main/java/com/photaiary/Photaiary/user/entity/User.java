@@ -5,21 +5,19 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.DynamicInsert;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
-
 import java.time.LocalDateTime;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EntityListeners(AuditingEntityListener.class)
-@DynamicInsert
 
 public class User {
     @Id
@@ -57,13 +55,14 @@ public class User {
     @Column(columnDefinition = "varchar(9) default 'ACTIVE'")
     private StatusType status;
 
-    @ManyToMany
-    @JoinTable(
-            name="user_authority",
-            joinColumns = {@JoinColumn(name="user_index",referencedColumnName = "user_index")},
-            inverseJoinColumns = {@JoinColumn(name="authority_name",referencedColumnName = "authority_name")}
-    )
-    private Set<Authority> authorities;
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private List<Authority> roles = new ArrayList<>();
+
+    public void setRoles(List<Authority> role) {
+        this.roles = role;
+        role.forEach(o -> o.setUser(this));
+    }
 
 
     @Builder

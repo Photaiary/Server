@@ -1,23 +1,31 @@
 package com.photaiary.Photaiary.user.entity;
 
-import lombok.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
-@Table(name="authority")
-@Setter
 @Getter
-@AllArgsConstructor
-@NoArgsConstructor
-@Builder
+@AllArgsConstructor @NoArgsConstructor @Builder
 public class Authority {
 
     @Id
-    @Column(name="authority_name",length=50)
-    private String authorityName;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonIgnore
+    private Long id;
 
+    private String name;
+
+    @JoinColumn(name = "member")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
+    private User user;
+
+    public void setUser(User user) {
+        this.user = user;
+    }
 }
