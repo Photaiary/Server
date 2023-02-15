@@ -2,12 +2,14 @@ package com.photaiary.Photaiary.post.photo.controller;
 
 import com.photaiary.Photaiary.post.photo.dto.EditRequest;
 import com.photaiary.Photaiary.post.photo.dto.PhotoRequest;
+import com.photaiary.Photaiary.post.photo.dto.PhotoS3Dto;
 import com.photaiary.Photaiary.post.photo.service.PhotoService;
+import com.photaiary.Photaiary.post.photo.vo.PhotoVo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
+import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
@@ -15,10 +17,10 @@ import java.io.File;
 public class PhotoController {
     private final PhotoService photoService;
     
-    @PostMapping("/upload")
-    public Long upload(@RequestBody PhotoRequest photoRequest) {
-        return photoService.photoSave(photoRequest);
-    }
+//    @PostMapping("/upload")
+//    public Long upload(@RequestBody PhotoRequest photoRequest){
+//        return photoService.photoInfoSave(photoRequest);
+//    }
 
     @PutMapping("/edit")
     public Long update(@RequestBody EditRequest editRequest) {
@@ -26,15 +28,10 @@ public class PhotoController {
     }
 
     @PostMapping("/uploadtest")
-    public String uploadTest(@RequestParam("img") MultipartFile img) {
-        try {
-            javaxt.io.Image image = new javaxt.io.Image();
-            System.out.println(img.getOriginalFilename());
-            return img.getOriginalFilename();
-        } catch(Exception e){
-            System.out.println("no");
-            return "wrong";
-        }
+    public Long uploadTest(@RequestParam("img") MultipartFile img, @RequestPart PhotoRequest photoRequest) throws Exception {
+        PhotoVo photoVo = new PhotoVo(img);
+        PhotoS3Dto photoS3Dto = new PhotoS3Dto();
+        return photoService.photoInfoSave(photoRequest, photoVo, photoS3Dto);
     }
 
     @GetMapping("/upload")
