@@ -28,7 +28,7 @@ public class JwtProvider {
 
     //만료 시나리오를 위해
     //access는 1분, refresh는 2분.
-    private final long exp = 1000L * 60;
+    private final long exp = 1000L * 60*60;
 
     private final JpaUserDetailsService userDetailsService;
 

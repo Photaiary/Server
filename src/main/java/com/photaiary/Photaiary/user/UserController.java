@@ -44,9 +44,9 @@ public class UserController {
     public ResponseEntity<TokenDto> refresh(@RequestBody TokenDto token) throws Exception {
         return new ResponseEntity<>( signService.refreshAccessToken(token), HttpStatus.OK);
     }
-    @GetMapping("/user/get")
-    public ResponseEntity<SignResponseDto> getUser(@RequestParam String account) throws Exception {
-        return new ResponseEntity<>( signService.getUser(account), HttpStatus.OK);
+    @PostMapping("/user/get")
+    public ResponseEntity<SignResponseDto> getUser(@RequestBody Map<String,String> emailMap) throws Exception {
+        return new ResponseEntity<>( signService.getUser(emailMap.get("email")), HttpStatus.OK);
     }
 
     @GetMapping("/admin/get")
