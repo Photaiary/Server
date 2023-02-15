@@ -4,6 +4,7 @@ import com.photaiary.Photaiary.post.daily.entity.Daily;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 
@@ -25,7 +26,8 @@ public class Photo {
     private String image;
     @Column
     private String comment;
-    @Column(name="deleteStatus", columnDefinition = "varchar(9) default 'exist'")
+//    @Column(name="deleteStatus", columnDefinition = "varchar(9) default 'exist'")
+    @Column(name="deleteStatus")
     @Enumerated(EnumType.STRING)
     private DeleteStatus deleteStatus;
     @Column(length=9)
