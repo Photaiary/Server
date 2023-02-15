@@ -37,6 +37,33 @@ spring:
     pathmatch:
       matching-strategy: ant_path_matcher
 
+  mail:
+    # Google smtp server 사용
+    host: smtp.gmail.com
+    port: 587
+    username: schang1008 #앱 비밀번호 발급받은 google 계정
+    password: fatnqwqzcvgzgebm #발급받은 앱 비밀번호
+    properties:
+      mail:
+        smtp:
+          starttls:
+            enable: true
+          auth: true
+
+  jwt:
+    secret:
+      key: VlwEyVBsYt9V7zq57TejMnVUyzblYcfPQye08f7MGVA9XkHa
+    token-validity-in-seconds: 86400
+
+redis:
+  host: local
+  port: 6379
+
+session:
+  jdbc:
+    initialize:
+      schema: always
+
 logging.level:
   org.hibernate.SQL: debug
 
