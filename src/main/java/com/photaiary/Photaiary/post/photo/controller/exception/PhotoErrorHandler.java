@@ -1,23 +1,57 @@
 package com.photaiary.Photaiary.post.photo.controller.exception;
 
+import com.photaiary.Photaiary.global.exception.ExceptionResponse;
+import com.photaiary.Photaiary.post.photo.controller.exception.custom.FileConvertException;
+import com.photaiary.Photaiary.post.photo.controller.exception.custom.NoLocationException;
+import com.photaiary.Photaiary.post.photo.controller.exception.custom.NoUserException;
+import com.photaiary.Photaiary.post.photo.controller.exception.custom.VoException;
+import lombok.NoArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.context.request.WebRequest;
 
-@ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
-public class PhotoErrorHandler extends RuntimeException{
-    public PhotoErrorHandler() {
-        super();
+import java.util.Date;
+
+@NoArgsConstructor
+public class PhotoErrorHandler {
+    private Exception exception;
+    private WebRequest webRequest;
+
+    public PhotoErrorHandler(Exception e, WebRequest webRequest) {
+        this.exception = e;
+        this.webRequest = webRequest;
     }
 
-    public PhotoErrorHandler(String message, Throwable cause) {
-        super(message, cause);
+    public ExceptionResponse handleError() {
+        if (exception instanceof NoUserException) {
+            return handleNoUserError();
+        } else if (exception instanceof VoException) {
+            return handleVoError();
+        } else if (exception instanceof NoLocationException) {
+            return handleNoLocationError();
+        } else if (exception instanceof FileConvertException) {
+            return handleFileConvertError();
+        }
+        return null;
     }
 
-    public PhotoErrorHandler(String message) {
-        super(message);
+    private ExceptionResponse handleNoUserError() {
+        System.out.println(1);
+        return new ExceptionResponse(new Date(), HttpStatus.INTERNAL_SERVER_ERROR.value(), exception.getMessage(), webRequest.getDescription(false));
     }
 
-    public PhotoErrorHandler(Throwable cause) {
-        super(cause);
+    private ExceptionResponse handleVoError() {
+        System.out.println(2);
+        return new ExceptionResponse(new Date(), HttpStatus.INTERNAL_SERVER_ERROR.value(), exception.getMessage(), webRequest.getDescription(false));
+    }
+
+    private ExceptionResponse handleNoLocationError() {
+        System.out.println(3);
+        return new ExceptionResponse(new Date(), HttpStatus.INTERNAL_SERVER_ERROR.value(), exception.getMessage(), webRequest.getDescription(false));
+    }
+
+    private ExceptionResponse handleFileConvertError() {
+        System.out.println(4);
+        return new ExceptionResponse(new Date(), HttpStatus.INTERNAL_SERVER_ERROR.value(), exception.getMessage(), webRequest.getDescription(false));
     }
 }
