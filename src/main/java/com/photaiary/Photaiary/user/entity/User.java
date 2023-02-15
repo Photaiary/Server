@@ -1,7 +1,6 @@
 package com.photaiary.Photaiary.user.entity;
 
 
-import com.amazonaws.services.ec2.model.StatusType;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
