@@ -22,7 +22,7 @@ import java.util.List;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)    // AUTO_INCREMENT
-    @Column(name = "user_index", nullable = false)
+    @Column( nullable = false)
     private Long userIndex;
 
     @Column(unique = true, nullable = false)  // not null

@@ -79,7 +79,7 @@ public class SignService {
     public String createRefreshToken(User user) {
         Token token = tokenRepository.save(
                 Token.builder()
-                        .user_index(user.getUserIndex())
+                        .email(user.getEmail())
                         .refresh_token(UUID.randomUUID().toString())
                         .expiration(120) //만료시나리오 위해 2분
                         .build()
@@ -88,7 +88,7 @@ public class SignService {
     }
 
     public Token validRefreshToken(User user, String refreshToken) throws Exception {
-        Token token = tokenRepository.findByUserIndex(user.getUserIndex()).orElseThrow(() -> new Exception("만료된 계정입니다. 로그인을 다시 시도하세요"));
+        Token token = tokenRepository.findByEmail(user.getEmail()).orElseThrow(() -> new Exception("만료된 계정입니다. 로그인을 다시 시도하세요"));
         // 해당유저의 Refresh 토큰 만료 : Redis에 해당 유저의 토큰이 존재하지 않음
         if (token.getRefresh_token() == null) {
             return null;

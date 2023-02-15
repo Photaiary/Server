@@ -1,6 +1,5 @@
 package com.photaiary.Photaiary.user.security;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -20,8 +19,7 @@ public class Token {
     //클래스명이 정확히는 refreshtoken임
 
     @Id
-    @JsonIgnore
-    private Long user_index;
+    private String email;
 
     private String refresh_token;
 

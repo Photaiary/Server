@@ -40,7 +40,7 @@ public class UserController {
     }
 
     //refresh토큰으로 access토큰 재발급 요청
-    @GetMapping("/refresh")
+    @PostMapping("/refresh")
     public ResponseEntity<TokenDto> refresh(@RequestBody TokenDto token) throws Exception {
         return new ResponseEntity<>( signService.refreshAccessToken(token), HttpStatus.OK);
     }
