@@ -1,5 +1,6 @@
 package com.photaiary.Photaiary.post.photo.repository;
 
+import com.photaiary.Photaiary.post.daily.entity.Daily;
 import com.photaiary.Photaiary.post.photo.entity.Photo;
 import com.photaiary.Photaiary.user.entity.User;
 import lombok.NoArgsConstructor;
@@ -22,6 +23,11 @@ public abstract class JpaPhotoRepository implements PhotoRepository {
     @Override
     public Optional<Photo> findById(Long id) {
         Photo photo = em.find(Photo.class, id);
+        return Optional.ofNullable(photo);
+    }
+
+    public Optional<Photo> findByDaily(Daily daily) {
+        Photo photo = em.find(Photo.class, daily);
         return Optional.ofNullable(photo);
     }
 //
