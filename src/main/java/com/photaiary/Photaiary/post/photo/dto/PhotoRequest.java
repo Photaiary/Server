@@ -4,30 +4,23 @@ import com.photaiary.Photaiary.post.photo.entity.DeleteStatus;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import java.io.Serializable;
+import java.util.List;
+
 @Getter
 @NoArgsConstructor
-public class PhotoRequest {
+public class PhotoRequest implements Serializable {
     private Long dailyId;
-    private String latitude;
-    private String longitude;
-    private String image;
-    private String comment;
-    private DeleteStatus deleteStatus;
-    private String tag;
+    private String comment = "";
+    private String tagListString = "EMPTY";
 
-    public void updateLocation(String latitude, String longitude) {
-        this.latitude = latitude;
-        this.longitude = longitude;
-    }
 
     @Builder
-    public PhotoRequest(Long dailyId, String latitude, String longitude, String image, String comment, DeleteStatus deleteStatus, String tag) {
+    public PhotoRequest(Long dailyId, String comment, String tagListString) {
         this.dailyId = dailyId;
-        this.latitude = latitude;
-        this.longitude = longitude;
-        this.image = image;
         this.comment = comment;
-        this.deleteStatus = deleteStatus;
-        this.tag = tag;
+        this.tagListString = tagListString;
     }
 }
