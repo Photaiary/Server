@@ -1,6 +1,5 @@
 package com.photaiary.Photaiary.post;
 
-
 import com.photaiary.Photaiary.post.diary.Diary;
 import com.photaiary.Photaiary.post.diary.DiaryPostRequestDto;
 import com.photaiary.Photaiary.post.diary.DiaryService;
@@ -28,11 +27,11 @@ public class PostController {
         Map<Integer, Object> response = new HashMap<>();
         Map<String, Object> data = new HashMap<>();
 
-        if(postedDiary.getDiaryIndex() == null){
+        if (postedDiary.getDiaryIndex() == null) {
             status = HttpStatus.BAD_REQUEST.value();
             data.put("success", "false");
             response.put(status, data);
-        } else if (postedDiary.getDiaryIndex()!=null) {
+        } else if (postedDiary.getDiaryIndex() != null) {
             status = HttpStatus.OK.value();
             data.put("success", "true");
             response.put(status, data);
@@ -42,7 +41,8 @@ public class PostController {
     }
 
     @GetMapping("/daily/{dailyIndex}/diary")
-    public List<Diary> findAll(@PathVariable Long dailyIndex){
+    public List<Diary> findAll(@PathVariable Long dailyIndex) {
         return diaryService.findAll();
     }
+
 }
