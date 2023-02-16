@@ -3,6 +3,7 @@ package com.photaiary.Photaiary.post.photo.service;
 import com.photaiary.Photaiary.post.daily.entity.Daily;
 import com.photaiary.Photaiary.post.daily.repository.DailyReposiotry;
 import com.photaiary.Photaiary.post.photo.controller.exception.custom.NoUserException;
+import com.photaiary.Photaiary.post.photo.dto.SinglePhotoDto;
 import com.photaiary.Photaiary.post.photo.dto.EditRequest;
 import com.photaiary.Photaiary.post.photo.dto.PhotoRequest;
 import com.photaiary.Photaiary.post.photo.dto.PhotoS3Dto;
@@ -13,11 +14,9 @@ import com.photaiary.Photaiary.post.photo.validator.PhotoRequestValidator;
 import com.photaiary.Photaiary.post.photo.vo.PhotoVo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 
 import javax.transaction.Transactional;
-import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -80,6 +79,21 @@ public class PhotoService {
         return "error";
     }
 
+    @Transactional
+    public Boolean photoDelete(SinglePhotoDto singlePhotoDto)  {
+//        photoRepository.deleteById(deleteRequest.getPhotoId());
+//        return true;
+        return photoRepository.deleteByRequestId(singlePhotoDto.getPhotoId());
+    }
+
+    @Transactional
+    public String viewSinglePhoto(SinglePhotoDto singlePhotoDto) {
+//        return photoRepository.findById(singlePhotoDto.getPhotoId());
+        Optional<Photo> photo = photoRepository.findById(singlePhotoDto.getPhotoId());
+        if(photo.isPresent())
+            return photo.get().getImage();
+        return "No Photo";
+    }
 //    @Transactional
 //    public List<String> getImageByDaily(Long userId, String dailyValue) {
 //        Daily today = dailyReposiotry.findByDailyValue  (dailyValue);
