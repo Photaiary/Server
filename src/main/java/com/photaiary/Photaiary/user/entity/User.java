@@ -43,7 +43,7 @@ public class User {
     @Column
     private String profileImage; //기본값 감자이미지.
 
-    private String refreshToken;
+//    private String refreshToken;
 
     @CreatedDate
     @Column(updatable = false)
@@ -79,7 +79,7 @@ public class User {
         this.profileImage=profileImage;
     }
 
-    public void setRefreshToken(String refreshToken) { // 추가!
-        this.refreshToken = refreshToken;
-    }
+//    public void setRefreshToken(String refreshToken) { // 추가!
+//        this.refreshToken = refreshToken;
+//    }
 }
