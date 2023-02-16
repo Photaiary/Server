@@ -2,13 +2,10 @@ package com.photaiary.Photaiary.post.photo.repository;
 
 import com.photaiary.Photaiary.post.daily.entity.Daily;
 import com.photaiary.Photaiary.post.photo.entity.Photo;
-import com.photaiary.Photaiary.user.entity.User;
 import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import java.util.List;
 import java.util.Optional;
 @NoArgsConstructor
 @Repository
@@ -24,6 +21,15 @@ public abstract class JpaPhotoRepository implements PhotoRepository {
     public Optional<Photo> findById(Long id) {
         Photo photo = em.find(Photo.class, id);
         return Optional.ofNullable(photo);
+    }
+    @Override
+    public void deleteById(Long id) throws RuntimeException{
+        Photo photo = em.find(Photo.class, id);
+        if (photo != null) {
+            em.remove(photo);
+            return ;
+        }
+        throw new RuntimeException("Not Deleted");
     }
 
     public Optional<Photo> findByDaily(Daily daily) {
