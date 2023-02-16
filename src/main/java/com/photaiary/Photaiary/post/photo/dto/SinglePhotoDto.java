@@ -5,6 +5,6 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 @Getter
-public class DeleteRequest {
+public class SinglePhotoDto {
     Long photoId;
 }
