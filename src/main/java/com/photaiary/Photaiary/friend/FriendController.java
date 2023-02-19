@@ -17,8 +17,10 @@ import java.util.Map;
 /**
  * 수정사항:
  * [Refactor] addFollow 구조 개선
- */
+ */    @RequestMapping("/user")
+
 public class FriendController {
+
 
     private final FriendService service;
 
@@ -68,7 +70,7 @@ public class FriendController {
     }
 
     @GetMapping("/friend/list/{userId}")
-    public Map<Integer, Object> readFriends(@PathVariable Long userId) {
+    public Map<Integer, Object> readFriends(@PathVariable String userId) { //userId is token
         Map<Integer, Object> response = new HashMap<>();
         Map<String, Object> data = new HashMap<>();
 
