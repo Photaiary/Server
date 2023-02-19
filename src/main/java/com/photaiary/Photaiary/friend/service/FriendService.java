@@ -39,9 +39,7 @@ public class FriendService {
         User toUser = userRepository.findById(requestDto.getToUserId()).get();
         User fromUser = userRepository.findById(requestDto.getFromUserId()).get();
 
-        toUser.getEmail();
-        fromUser.getEmail();
-        jwtProvider.getEmail()
+
         // 엑세스 토큰을 발급 받은 시점부터 fromUser는 이미 회원임이 증명되었다. 즉, 상대방이 없는 것만 확인하면 됨.
         if (toUser != null /*&& fromUser != null*/) { // 상대가 회원인가? (차후: 로그인 개발하고 token을 통한 구현으로 refactoring)
 
