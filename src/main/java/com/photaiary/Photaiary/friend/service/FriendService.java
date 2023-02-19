@@ -135,29 +135,25 @@ public class FriendService {
     }
 
     @Transactional
-    public List<String> readFriends(Long id){ //Long 에서 String(토큰)으로 변경
+    public List<String> readFriends(String token){ //Long 에서 String(토큰)으로 변경(리팩토링 0219 07:26) 😊
         // Check myUserId(fromUser) exist in useDB. (If not exist, then impossible!) (second develop -> using user token)
         List<String> myFriends= new ArrayList<>();
-        User fromUser = userRepository.findById(id).get();
+        String fromUserEmail = jwtProvider.getEmail("eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxQG5hdmVyLmNvbSIsInJvbGVzIjpbeyJuYW1lIjoiUk9MRV9VU0VSIn1dLCJpYXQiOjE2NzY4MTAxODIsImV4cCI6MTY3NjgxMTk4Mn0.6OUA3p_E6fCTlP7bJYjTHdKNBfZLzAMgHLSNAiU90hc");
+        Optional<User> fromUser = userRepository.findByEmail(fromUserEmail);
 
-        //Is exist fromUSer information in user DataBase?
-        if (fromUser != null){ //yes(In userDB: myUserId)
+        List<Friend> friends = friendRepository.findAll();
+        Iterator<Friend> iterFriends = friends.iterator();
 
-            List<Friend> friends = friendRepository.findAll();
-            Iterator<Friend> iterFriends = friends.iterator();
+        while (iterFriends.hasNext()) {
+            Friend iterFriend = iterFriends.next();
 
-            while (iterFriends.hasNext()) {
-                Friend iterFriend = iterFriends.next();
-
-                //Find a friend of the myUser.
-                if (iterFriend.getFromUser().getUserIndex() == id) { //yes( unique case )
-                    myFriends.add(iterFriend.getToUser().getNickname());
-                }
+            //Find a friend of the myUser.
+            //필요한 것 : iterFriend의 토큰 값 -> 대신 토큰으로 이메일을 찾아서 이메일 비교
+            if (iterFriend.getFromUser().getEmail().equals(fromUserEmail)) { //yes( unique case )
+                myFriends.add(iterFriend.getToUser().getNickname());
             }
-            return myFriends; // the friends of the myUser (LIST TYPE)
         }
-
-        return null; // myUserId is null
+        return myFriends; // the friends of the myUser (LIST TYPE)
     }
 }
 // 예외 핸들링 잊지 말고 리팩토링 하자.
