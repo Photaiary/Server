@@ -29,7 +29,8 @@ public class FriendController {
 
         HttpStatus result = service.makeFriend(requestDto);
 
-        if (result == HttpStatus.BAD_REQUEST) {
+        if (result == HttpStatus.BAD_REQUEST
+                || result ==null) {
             data.put("isSuccess", "false");
             data.put("message", "친구 요청이 실패하였습니다");
             response.put(HttpStatus.BAD_REQUEST.value(), data);
