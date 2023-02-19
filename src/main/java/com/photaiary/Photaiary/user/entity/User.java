@@ -14,6 +14,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+
+
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -43,7 +45,7 @@ public class User {
     @Column
     private String profileImage; //기본값 감자이미지.
 
-    private String refreshToken;
+//    private String refreshToken;
 
     @CreatedDate
     @Column(updatable = false)
@@ -55,7 +57,7 @@ public class User {
 
     @Enumerated(EnumType.STRING)
     @Column(columnDefinition = "varchar(9) default 'ACTIVE'")
-    private StatusType status;
+    private Status status;
 
 
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
@@ -79,7 +81,4 @@ public class User {
         this.profileImage=profileImage;
     }
 
-    public void setRefreshToken(String refreshToken) { // 추가!
-        this.refreshToken = refreshToken;
-    }
 }

@@ -3,13 +3,13 @@ package com.photaiary.Photaiary.user.entity;
 import lombok.Getter;
 
 @Getter
-public enum StatusType {
+public enum Status {
     ACTIVE("활성"),
     UNACTIVE("비활성");
 
     private final String value;
 
-    StatusType(String value) {
+    Status(String value) {
         this.value = value;
     }
 }
