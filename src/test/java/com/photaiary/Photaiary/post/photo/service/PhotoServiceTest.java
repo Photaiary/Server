@@ -3,9 +3,11 @@ package com.photaiary.Photaiary.post.photo.service;
 import com.photaiary.Photaiary.post.daily.entity.Daily;
 import com.photaiary.Photaiary.post.daily.repository.DailyReposiotry;
 import com.photaiary.Photaiary.post.photo.dto.PhotoRequest;
+import com.photaiary.Photaiary.post.photo.dto.PhotoS3Dto;
 import com.photaiary.Photaiary.post.photo.entity.DeleteStatus;
 import com.photaiary.Photaiary.post.photo.entity.Photo;
 import com.photaiary.Photaiary.post.photo.repository.PhotoRepository;
+import com.photaiary.Photaiary.post.photo.vo.PhotoVo;
 import com.photaiary.Photaiary.user.entity.User;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,6 +19,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+
+import java.io.File;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
@@ -46,15 +50,10 @@ public class PhotoServiceTest {
                 .user(user)
                 .dailyValue("230208")
                 .build();
-//        dailyId = dailyReposiotry.save(daily).getDailyIndex();
         photoRequest = PhotoRequest.builder()
                 .dailyId(dailyId)
-                .longitude(longitude)
-                .latitude(latitude)
-                .tag(tag)
-                .image(imageLink)
+                .tagListString("['안녕', '친구야']")
                 .comment(comment)
-                .deleteStatus(deleteStatus)
                 .build();
     }
     @AfterEach
@@ -62,20 +61,18 @@ public class PhotoServiceTest {
         dailyReposiotry.deleteAll();
     }
     PhotoRequest photoRequest;
-    User user;
-    Daily daily;
-    Photo photo;
-    Long dailyId;
-    final String latitude = "51.1";
-    final String longitude = "52.2";
-    final String imageLink = "abcd/abcd";
-    final String comment = "abcd";
-    final DeleteStatus deleteStatus = DeleteStatus.not_exist;
-    final String tag = "000000001";
+    private User user;
+    private Daily daily;
+    private Photo photo;
+    private Long dailyId;
+    private final String comment = "abcd";
+    private final DeleteStatus deleteStatus = DeleteStatus.not_exist;
+    private final String tag = "000000001";
     @Test
     @DisplayName("사진 정보 저장 기능")
     public void test_photoSave() {
-        assertThat(photoRepository.findById(photoService.photoSave(photoRequest))).isNotNull();
+        PhotoVo photoVo = new PhotoVo();
+        assertThat(photoRepository.findById(photoService.photoInfoSave(photoRequest, photoVo, (PhotoS3Dto)null))).isNotNull();
     }
     @Test
     @DisplayName("사진 정보 수정 기능")

@@ -8,14 +8,12 @@ import com.photaiary.Photaiary.post.photo.controller.exception.custom.FileConver
 import com.photaiary.Photaiary.post.photo.controller.exception.custom.NoLocationException;
 import com.photaiary.Photaiary.post.photo.controller.exception.custom.VoException;
 import lombok.*;
-import org.springframework.boot.autoconfigure.couchbase.CouchbaseProperties;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotNull;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.List;
 
 @Getter
 @NoArgsConstructor
@@ -30,13 +28,9 @@ public class PhotoVo {
             throw new VoException(e.getMessage());
         }
     }
+
     private String latitude;
     private String longitude;
-    public List<String> getLocationOrNull() {
-        if(!latitude.isEmpty() && !longitude.isEmpty())
-            return List.of(latitude, longitude);
-        return List.of(null);
-    }
 
     private File multiFileToFile(MultipartFile multipartFile) throws FileConvertException {
         try {
@@ -50,6 +44,7 @@ public class PhotoVo {
             throw new FileConvertException("파일 변환에 실패하였습니다. 사유 : " + e.getMessage());
         }
     }
+
     private void updateLocation(@NotNull File file) throws NoLocationException {
         try {
             Metadata metadata = ImageMetadataReader.readMetadata(file);
@@ -62,9 +57,5 @@ public class PhotoVo {
         } catch (ImageProcessingException e) {
             throw new NoLocationException("GPS 정보가 존재하지 않습니다. 사유 : " + e.getMessage());
         }
-    }
-
-    public Boolean hasLocation() {
-        return (latitude != null) && (longitude != null);
     }
 }

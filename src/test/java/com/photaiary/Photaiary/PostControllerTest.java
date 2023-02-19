@@ -1,7 +1,6 @@
 package com.photaiary.Photaiary;
 
 
-import com.photaiary.Photaiary.post.daily.Daily;
 import com.photaiary.Photaiary.post.diary.Diary;
 import com.photaiary.Photaiary.post.diary.DiaryPostRequestDto;
 import com.photaiary.Photaiary.post.diary.DiaryRepository;
