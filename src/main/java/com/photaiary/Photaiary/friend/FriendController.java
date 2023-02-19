@@ -1,8 +1,8 @@
 package com.photaiary.Photaiary.friend;
 
 import com.photaiary.Photaiary.friend.dto.FriendFollowRequestDto;
-import com.photaiary.Photaiary.friend.exception.custom.ToUserNotFoundException;
 import com.photaiary.Photaiary.friend.service.FriendService;
+import com.photaiary.Photaiary.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
