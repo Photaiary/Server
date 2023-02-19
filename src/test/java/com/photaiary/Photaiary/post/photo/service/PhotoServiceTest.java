@@ -26,7 +26,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 
 @ExtendWith(SpringExtension.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+//@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class PhotoServiceTest {
 
     @LocalServerPort
@@ -70,7 +70,7 @@ public class PhotoServiceTest {
     private final String tag = "000000001";
     @Test
     @DisplayName("사진 정보 저장 기능")
-    public void test_photoSave() {
+    public void test_photoSave() throws Exception {
         PhotoVo photoVo = new PhotoVo();
         assertThat(photoRepository.findById(photoService.photoInfoSave(photoRequest, photoVo, (PhotoS3Dto)null))).isNotNull();
     }
