@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -35,38 +36,57 @@ public class FriendService {
      * 4.Friend Entity에서 fromUser와 toUser의 fetch=LAZY 일때, JPA를 통한 조회 변경이 안됨.
      */
     @Transactional
-    public HttpStatus makeFriend(FriendFollowRequestDto requestDto) throws Exception {
+    public HttpStatus makeFriend(FriendFollowRequestDto requestDto) throws Exception { //😊
         // 상대방&내 회원 정보 존재 확인 In DB
-        User toUser = userRepository.findById(requestDto.getToUserId()).get();
-        User fromUser = userRepository.findById(requestDto.getFromUserId()).get();
+        String fromUserEmail = jwtProvider.getEmail("eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxQG5hdmVyLmNvbSIsInJvbGVzIjpbeyJuYW1lIjoiUk9MRV9VU0VSIn1dLCJpYXQiOjE2NzY4MTAxODIsImV4cCI6MTY3NjgxMTk4Mn0.6OUA3p_E6fCTlP7bJYjTHdKNBfZLzAMgHLSNAiU90hc");
+        Optional<User> fromUser = userRepository.findByEmail(fromUserEmail);
 
-        // 엑세스 토큰을 발급 받은 시점부터 fromUser는 이미 회원임이 증명되었다. 즉, 상대방이 없는 것만 확인하면 됨.
-        if (toUser != null /*&& fromUser != null*/) { // 상대가 회원인가? (차후: 로그인 개발하고 token을 통한 구현으로 refactoring)
+        //내 회원 정보 여부 확인은 필요 없지 않을까?
+        boolean cantContinue = requestDto.getToUserEmail().equals(fromUserEmail);
+        if(cantContinue==false){
 
-            // YES
-            List<Friend> isFriend = friendRepository.findAll();
-            Iterator<Friend> iterFriends = isFriend.iterator();
+            String toUserEmail = requestDto.getToUserEmail();
+            Optional<User> toUser = userRepository.findByEmail(toUserEmail);
 
-            while (iterFriends.hasNext()) {
+            boolean isFriend;
 
-                Friend friend = iterFriends.next();
+            if (toUser.isPresent()) { // 상대가 회원인가?
+                // YES
+                Friend requestedFriend = Friend.builder()
+                        .toUser(toUser.get())
+                        .fromUser(fromUser.get())
+                        .build();
 
-                if (friend.equals(requestDto) ) { // 이미 친구?
-                    // YES
-                    return HttpStatus.BAD_REQUEST;
+                List<Friend> friends = friendRepository.findAll();
+                Iterator<Friend> iterFriends = friends.iterator();
+
+                while (iterFriends.hasNext()) {
+
+                    Friend iterFriend = iterFriends.next();
+
+                    isFriend = (
+                            (toUserEmail.equals(iterFriend.getToUser().getEmail()))
+                                    &&(fromUserEmail.equals(iterFriend.getFromUser().getEmail()))
+                    );
+
+                    if (isFriend) { // 이미 친구?
+                        // YES
+                        return HttpStatus.BAD_REQUEST;
+                    }
                 }
+
+                //생성
+                friendRepository.save(Friend.builder()
+                        .toUser(toUser.get())
+                        .fromUser(fromUser.get())
+                        .build());
+
+                return HttpStatus.OK;
             }
-
-            //생성
-            friendRepository.save(Friend.builder()
-                    .toUser(toUser)
-                    .fromUser(fromUser)
-                    .build());
-
-            return HttpStatus.OK;
+            // CASE: 존재하지 않는 회원일 경우 (UserNotFoundException)
+            return HttpStatus.NOT_FOUND;
         }
-        // CASE: 존재하지 않는 회원일 경우 (UserNotFoundException)
-        return HttpStatus.NOT_FOUND;
+        return null;
     }
 
     @Transactional
