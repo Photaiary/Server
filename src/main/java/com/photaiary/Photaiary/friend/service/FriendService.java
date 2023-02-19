@@ -90,14 +90,17 @@ public class FriendService {
     }
 
     @Transactional
-    public HttpStatus unFollow(FriendFollowRequestDto requestDto) {
+    public HttpStatus unFollow(FriendFollowRequestDto requestDto) throws Exception{// 😊
         // 상대방&내 회원 정보 존재 확인 In DB (If not exist, then impossible!)
-        User toUser = userRepository.findById(requestDto.getToUserId()).get();
-        User fromUser = userRepository.findById(requestDto.getFromUserId()).get();
+        String fromUserEmail = jwtProvider.getEmail("eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxQG5hdmVyLmNvbSIsInJvbGVzIjpbeyJuYW1lIjoiUk9MRV9VU0VSIn1dLCJpYXQiOjE2NzY4MTAxODIsImV4cCI6MTY3NjgxMTk4Mn0.6OUA3p_E6fCTlP7bJYjTHdKNBfZLzAMgHLSNAiU90hc");
+        Optional<User> fromUser = userRepository.findByEmail(fromUserEmail);
+
+        String toUserEmail = requestDto.getToUserEmail();
+        Optional<User> toUser = userRepository.findByEmail(toUserEmail);
 
         boolean isFriend;
 
-        if ((toUser != null) && (fromUser != null)) { // 상대와 내가 회원인가? (차후: 로그인 개발하고 token을 통한 구현으로 refactoring)
+        if (toUser.isPresent()) { // 상대가 회원인가? (차후: 로그인 개발하고 token을 통한 구현으로 refactoring)
             // 친구가 없으면 절교도 할 수 없다
             // YES
 
@@ -105,28 +108,23 @@ public class FriendService {
             Iterator<Friend> iterFriends = friends.iterator();
 
 
-            //이 반복문 stream() 구조 탐색해도 괜찮을듯?
-            //자료구조는 적용이 될까? 되면 어떤식으로 코드가 작성될까?
+            //이 반복문 stream() 구조 탐색해도 되려나?
             while (iterFriends.hasNext()) {
 
                 Friend iterFriend = iterFriends.next();
 
-                FriendFollowRequestDto iterDto = FriendFollowRequestDto.builder()
-                        .toUserId(iterFriend.getToUser().getUserIndex())
-                        .fromUserId(iterFriend.getFromUser().getUserIndex())
-                        .build();
+                // 친구관계 확인 (리팩토링 0219 07:24)
+                isFriend = ((toUserEmail.equals(iterFriend.getToUser().getEmail()))
+                        &&(fromUserEmail.equals(iterFriend.getFromUser().getEmail())));
 
-
-                isFriend = (iterDto.getToUserId() == requestDto.getToUserId())
-                        && (iterDto.getFromUserId() == requestDto.getFromUserId());
 
                 if (isFriend) { // Already friend?
-                    // YES(possible to deleting)
-                    // ISSUE: 삭제 로직이 정상적으로 작동하지 않는다.
+                    // YES!(possible to deleting)
                     friendRepository.delete(iterFriend);
 
                     return HttpStatus.OK;
                 }
+                //⚠️[ISSUE: O(N) -> 정보가 많을 수록 느려진다. 어떻게 할 것 인가?]
             }
 
             // unfollow is impossible. cuz the relationship between fromUser and toUser is not friend.
