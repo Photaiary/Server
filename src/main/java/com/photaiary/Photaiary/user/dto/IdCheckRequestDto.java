@@ -11,5 +11,4 @@ public class IdCheckRequestDto {
     public IdCheckRequestDto(String nickname){
         this.nickname=nickname;
     }
-
 }

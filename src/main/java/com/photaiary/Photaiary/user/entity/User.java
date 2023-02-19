@@ -22,7 +22,7 @@ import java.util.List;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)    // AUTO_INCREMENT
-    @Column(nullable = false)
+    @Column( nullable = false)
     private Long userIndex;
 
     @Column(unique = true, nullable = false)  // not null
@@ -43,6 +43,7 @@ public class User {
     @Column
     private String profileImage; //기본값 감자이미지.
 
+    private String refreshToken;
 
     @CreatedDate
     @Column(updatable = false)
@@ -54,7 +55,7 @@ public class User {
 
     @Enumerated(EnumType.STRING)
     @Column(columnDefinition = "varchar(9) default 'ACTIVE'")
-    private Status status;
+    private StatusType status;
 
 
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
@@ -67,13 +68,18 @@ public class User {
 
 
     @Builder
-    public User(String email, String password, String nickname, String name, String birthdate, String profileImage) {
+    public User(String email, String password, String nickname, String name, String birthdate,
+                String profileImage){
 
-        this.email = email;
-        this.password = password;
-        this.nickname = nickname;
-        this.name = name;
-        this.birthdate = birthdate;
-        this.profileImage = profileImage;
+        this.email=email;
+        this.password=password;
+        this.nickname=nickname;
+        this.name=name;
+        this.birthdate=birthdate;
+        this.profileImage=profileImage;
+    }
+
+    public void setRefreshToken(String refreshToken) { // 추가!
+        this.refreshToken = refreshToken;
     }
 }
