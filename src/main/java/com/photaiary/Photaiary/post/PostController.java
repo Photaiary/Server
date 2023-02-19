@@ -4,6 +4,7 @@ package com.photaiary.Photaiary.post;
 import com.photaiary.Photaiary.post.diary.Diary;
 import com.photaiary.Photaiary.post.diary.DiaryPostRequestDto;
 import com.photaiary.Photaiary.post.diary.DiaryService;
+import com.photaiary.Photaiary.post.diary.DiaryUpdateRequestDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -43,7 +44,7 @@ public class PostController {
 
     //추가
     @PutMapping("/diary/{dailyIndex}")
-    public Map<Integer,Object> update(@PathVariable Long dailyIndex, @RequestBody DiaryPostRequestDto requestDto){
+    public Map<Integer,Object> update(@PathVariable Long dailyIndex, @RequestBody DiaryUpdateRequestDto requestDto){
         Diary updatedDiary = diaryService.updateByIdAndDiaryIndex(dailyIndex, requestDto);
 
         Map<Integer, Object> response = new HashMap<>();
