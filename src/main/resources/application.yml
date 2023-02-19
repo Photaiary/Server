@@ -85,8 +85,8 @@ cloud:
       bucket: photaiary-bucket
       dir:
     credentials:
-      access-key: ENC(jgbYCw9faOVfKlXwHMs4GnOTRrFm5UgWfGSdDhIcXpE=)
-      secret-key: ENC(w3a6gpyKp0OKrwzFX0FRVkV+8+0gDI+NQvyrtkljJe0FKJu7auFhTbKDKYrmIqO0ZgGtQm7+HKE=)
+      access-key: ENC(I00RaBIgMxUidVV3w20mvhqbCst3IchtDT8qcaZpiXM=)
+      secret-key: ENC(vuPMTm5svnamoNOhTRzv+JJAoW84oRE2jXlRpMPssSxNueK3ZM7Y0cAipOQ4lH173GUoLCgq3YE=)
     region:
       static: ap-northeast-2
       auto: false
