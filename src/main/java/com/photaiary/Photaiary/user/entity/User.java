@@ -81,7 +81,4 @@ public class User {
         this.profileImage=profileImage;
     }
 
-//    public void setRefreshToken(String refreshToken) { // 추가!
-//        this.refreshToken = refreshToken;
-//    }
 }
