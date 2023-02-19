@@ -11,7 +11,6 @@ public class FriendFollowRequestDto {
 
     private Long toUserId;
     private Long fromUserId;
-    private Long asfafsds;
 
     @Builder
     public FriendFollowRequestDto(Long toUserId, Long fromUserId) {
