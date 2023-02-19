@@ -49,7 +49,7 @@ public class DiaryService {
         }
         return null;
     }
-//    public List<Diary> findAll(){
-//        return repository.findAll();
-//    }
+    public List<Diary> findAll(){
+        return repository.findAll();
+    }
 }
