@@ -69,6 +69,51 @@ public class FriendService {
         return HttpStatus.NOT_FOUND;
     }
 
+    @Transactional
+    public HttpStatus unFollow(FriendFollowRequestDto requestDto) {
+        // 상대방&내 회원 정보 존재 확인 In DB (If not exist, then impossible!)
+        User toUser = userRepository.findById(requestDto.getToUserId()).get();
+        User fromUser = userRepository.findById(requestDto.getFromUserId()).get();
 
+        boolean isFriend;
+
+        if ((toUser != null) && (fromUser != null)) { // 상대와 내가 회원인가? (차후: 로그인 개발하고 token을 통한 구현으로 refactoring)
+            // 친구가 없으면 절교도 할 수 없다
+            // YES
+
+            List<Friend> friends = friendRepository.findAll();
+            Iterator<Friend> iterFriends = friends.iterator();
+
+
+            //이 반복문 stream() 구조 탐색해도 괜찮을듯?
+            //자료구조는 적용이 될까? 되면 어떤식으로 코드가 작성될까?
+            while (iterFriends.hasNext()) {
+
+                Friend iterFriend = iterFriends.next();
+
+                FriendFollowRequestDto iterDto = FriendFollowRequestDto.builder()
+                        .toUserId(iterFriend.getToUser().getUserIndex())
+                        .fromUserId(iterFriend.getFromUser().getUserIndex())
+                        .build();
+
+
+                isFriend = (iterDto.getToUserId() == requestDto.getToUserId())
+                        && (iterDto.getFromUserId() == requestDto.getFromUserId());
+
+                if (isFriend) { // Already friend?
+                    // YES(possible to deleting)
+                    // ISSUE: 삭제 로직이 정상적으로 작동하지 않는다.
+                    friendRepository.delete(iterFriend);
+
+                    return HttpStatus.OK;
+                }
+            }
+
+            // unfollow is impossible. cuz the relationship between fromUser and toUser is not friend.
+            return HttpStatus.BAD_REQUEST;
+        }
+        // CASE: this user is not exist (UserNotFoundException)
+        return HttpStatus.NOT_FOUND;
+    }
 }
 // 예외 핸들링 잊지 말고 리팩토링 하자.
