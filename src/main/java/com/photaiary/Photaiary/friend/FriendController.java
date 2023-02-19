@@ -67,6 +67,23 @@ public class FriendController {
         return response;
     }
 
+    @GetMapping("/friend/list/{userId}")
+    public Map<Integer, Object> readFriends(@PathVariable Long userId) {
+        Map<Integer, Object> response = new HashMap<>();
+        Map<String, Object> data = new HashMap<>();
+
+        List<String> myFriends = service.readFriends(userId);
+
+        if (myFriends == null) {
+            data.put("isSuccess", "false");
+            response.put(HttpStatus.BAD_REQUEST.value(), data);
+        } else if (myFriends != null) {
+            data.put("isSuccess", "true");
+            data.put("friend", myFriends);
+            response.put(HttpStatus.OK.value(), data);
+        }
+        return response;
+    }
 }
     //예외 처리 -> 컨트롤러 및 서비스계층에서 하지않고 throws Exception을 통해서 조금 더 객체적으로 설계해보기.
     //->컨트롤러 계층에서 예외 처리
