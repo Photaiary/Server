@@ -47,17 +47,17 @@ public class FriendController {
     }
 
     @PostMapping("/friend/unfollow")
-    public Map<Integer, Object> unFollow(@RequestBody FriendFollowRequestDto requestDto) {
+    public Map<Integer, Object> unFollow(@RequestBody FriendFollowRequestDto requestDto) throws Exception{
         Map<Integer, Object> response = new HashMap<>();
         Map<String, String> data = new HashMap<>();
 
         HttpStatus result = service.unFollow(requestDto);
 
-        if (result == HttpStatus.BAD_REQUEST) {
+        if (result == HttpStatus.NOT_FOUND) {
             data.put("isDelete", "false");
             data.put("message", "친구가 존재하지 않습니다");
             response.put(HttpStatus.BAD_REQUEST.value(), data);
-        } else if (result == HttpStatus.NOT_FOUND) {
+        } else if (result == HttpStatus.BAD_REQUEST) {
             data.put("isDelete", "false");
             data.put("message", "친구 삭제 요청이 실패하였습니다");
             response.put(HttpStatus.BAD_REQUEST.value(), data);
