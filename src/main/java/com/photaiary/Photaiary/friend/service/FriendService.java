@@ -115,5 +115,31 @@ public class FriendService {
         // CASE: this user is not exist (UserNotFoundException)
         return HttpStatus.NOT_FOUND;
     }
+
+    @Transactional
+    public List<String> readFriends(Long id){ //Long 에서 String(토큰)으로 변경
+        // Check myUserId(fromUser) exist in useDB. (If not exist, then impossible!) (second develop -> using user token)
+        List<String> myFriends= new ArrayList<>();
+        User fromUser = userRepository.findById(id).get();
+
+        //Is exist fromUSer information in user DataBase?
+        if (fromUser != null){ //yes(In userDB: myUserId)
+
+            List<Friend> friends = friendRepository.findAll();
+            Iterator<Friend> iterFriends = friends.iterator();
+
+            while (iterFriends.hasNext()) {
+                Friend iterFriend = iterFriends.next();
+
+                //Find a friend of the myUser.
+                if (iterFriend.getFromUser().getUserIndex() == id) { //yes( unique case )
+                    myFriends.add(iterFriend.getToUser().getNickname());
+                }
+            }
+            return myFriends; // the friends of the myUser (LIST TYPE)
+        }
+
+        return null; // myUserId is null
+    }
 }
 // 예외 핸들링 잊지 말고 리팩토링 하자.
