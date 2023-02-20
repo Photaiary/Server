@@ -1,5 +1,7 @@
 package com.photaiary.Photaiary.global;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -10,14 +12,21 @@ import org.springframework.http.HttpStatus;
 @Builder
 public class DefaultRes<T> {
 
-    private int statusCode;  // 상태 코드
-    private String responseMessage; // 부가 설명
-    private T data; // 응답 데이터
+    @ApiModelProperty(value = "응답 성공 여부")
+    @JsonProperty("isSuccess")
+    private Boolean isSuccess;
+    @ApiModelProperty(value = "상태 코드")
+    private int statusCode;
+    @ApiModelProperty(value = "부가 설명")
+    private String responseMessage;
+    @ApiModelProperty(value = "응답 데이터")
+    private T data;
 
 
     // 요청 성공의 경우
     public static<T> DefaultRes<T> res(T data){
         return DefaultRes.<T>builder()
+                .isSuccess(true)
                 .statusCode(HttpStatus.OK.value())
                 .responseMessage("요청에 성공하였습니다.")
                 .data(data)
