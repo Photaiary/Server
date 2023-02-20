@@ -31,7 +31,7 @@ public class SignService {
 
     private final JpaUserDetailsService userDetailsService;
 
-    public SignResponseDto login(LoginDto request) throws Exception {
+    public TokenDto login(LoginDto request) throws Exception {
         User user = userRepository.findByEmail(request.getEmail()).orElseThrow(() ->
                 new BadCredentialsException("잘못된 계정정보입니다."));
 
@@ -55,7 +55,8 @@ public class SignService {
                         .refreshToken(tokenDto.getRefreshToken())
                         .build())
                 .build();
-        return signResponseDto;
+
+        return signResponseDto.getToken();
     }
 
     public TokenDto validateRefreshToken(String refreshToken)throws Exception{
@@ -157,11 +158,11 @@ public class SignService {
     }
 
     @Transactional
-    public int idChk(String nickname){
+    public String idChk(String nickname){
         Optional<User> result = userRepository.findByNickname(nickname);
         if (result.isPresent())
-            return 1;
-        else return 0;
+            return "이미 사용 중";
+        else return "사용 가능";
     }
 
 
