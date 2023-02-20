@@ -22,6 +22,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        HttpServletResponse res = (HttpServletResponse) response;
+        res.setHeader("Access-Control-Allow-Origin", "*"); //허용대상 도메인
+        res.setHeader("Access-Control-Allow-Methods", "POST, GET, DELETE, PUT");
+//        response.setHeader("Access-Control-Max-Age", "3600");
+        response.setHeader("Access-Control-Allow-Headers", "x-requested-with, origin, content-type, accept");
+
         String token = jwtProvider.resolveToken(request);
         String email=jwtProvider.getEmail(token);
 //        this.user=
