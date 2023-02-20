@@ -82,10 +82,12 @@ public class UserController {
 
         return new ResponseEntity<>(DefaultRes.res(authCode),HttpStatus.OK);
     }
+
+//    @PostMapping("/update/theme")
+//    public ResponseEntity<SignResponseDto> updateTheme(@RequestBody HashMap<String, String> themeMap)throws Exception
+//    {
+//        String theme=signService.idChk(themeMap.get("theme"));
 //
-//    @GetMapping("/user/profile")
-//    public ResponseEntity<SignResponseDto> getUserFromToken(HttpServletRequest request)throws Exception{
-//        String email=(String)request.getAttribute("username");
 //        return new ResponseEntity<>(signService.getUser(email),HttpStatus.OK);
 //    }
 
