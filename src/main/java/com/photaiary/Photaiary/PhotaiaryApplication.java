@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 
 @SpringBootApplication(exclude = {SecurityAutoConfiguration.class})
 @EnableJpaAuditing
-@CrossOrigin("*")
+@CrossOrigin("localhost:3000")
 public class PhotaiaryApplication {
 
 	public static void main(String[] args) {
