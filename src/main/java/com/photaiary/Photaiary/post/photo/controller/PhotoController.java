@@ -3,8 +3,8 @@ package com.photaiary.Photaiary.post.photo.controller;
 import com.photaiary.Photaiary.post.photo.dto.SinglePhotoDto;
 import com.photaiary.Photaiary.post.photo.dto.EditRequest;
 import com.photaiary.Photaiary.post.photo.dto.PhotoRequest;
-import com.photaiary.Photaiary.post.photo.dto.PhotoS3Dto;
 import com.photaiary.Photaiary.post.photo.service.PhotoService;
+import com.photaiary.Photaiary.post.photo.vo.BucketVo;
 import com.photaiary.Photaiary.post.photo.vo.PhotoVo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -24,8 +24,8 @@ public class PhotoController {
     @PostMapping("/upload")
     public Long upload(@RequestParam("img") MultipartFile img, @RequestPart PhotoRequest photoRequest) throws Exception {
         PhotoVo photoVo = new PhotoVo(img);
-        PhotoS3Dto photoS3Dto = new PhotoS3Dto();
-        return photoService.photoInfoSave(photoRequest, photoVo, photoS3Dto);
+        BucketVo bucketVo = new BucketVo(img);
+        return photoService.photoInfoSave(photoRequest, photoVo, bucketVo);
     }
 
     @DeleteMapping("/")

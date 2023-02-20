@@ -50,6 +50,20 @@ public class S3UploadComponent {
         }
         return listUrl;
     }
+    public String uploadOneFile(MultipartFile multipartFile, String dirName) throws IOException {
+            File uploadFile = convert(multipartFile)
+                    .orElseThrow(()-> new IllegalArgumentException("MultipartFile -> File로 전환이 실패했습니다."));
+
+            // 파일 이름 중복되지 않기 위해서 UUID로 생성한 랜덤 값과 파일 이름을 연결하여 S3에 업로드
+            String formatDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("/yyyy-MM-dd HH:mm:ss"));
+            String fileName = dirName + formatDate + " " + multipartFile.getOriginalFilename();
+
+            // s3 업로드
+            String uploadImageUrl = putS3(uploadFile, fileName);
+            // 로컬 파일 삭제
+            removeFile(uploadFile);
+        return uploadImageUrl;
+    }
 
     // 파일 전환
     private Optional<File> convert(MultipartFile file) throws IOException{

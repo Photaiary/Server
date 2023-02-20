@@ -6,11 +6,11 @@ import com.photaiary.Photaiary.post.photo.controller.exception.custom.NoUserExce
 import com.photaiary.Photaiary.post.photo.dto.SinglePhotoDto;
 import com.photaiary.Photaiary.post.photo.dto.EditRequest;
 import com.photaiary.Photaiary.post.photo.dto.PhotoRequest;
-import com.photaiary.Photaiary.post.photo.dto.PhotoS3Dto;
 import com.photaiary.Photaiary.post.photo.entity.DeleteStatus;
 import com.photaiary.Photaiary.post.photo.entity.Photo;
 import com.photaiary.Photaiary.post.photo.repository.PhotoRepository;
 import com.photaiary.Photaiary.post.photo.validator.PhotoRequestValidator;
+import com.photaiary.Photaiary.post.photo.vo.BucketVo;
 import com.photaiary.Photaiary.post.photo.vo.PhotoVo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -27,7 +27,7 @@ public class PhotoService {
     private final PhotoRequestValidator photoRequestValidator;
 
     @Transactional
-    public Long photoInfoSave(PhotoRequest photoRequest, PhotoVo photoVo, PhotoS3Dto photoS3Dto) throws Exception {
+    public Long photoInfoSave(PhotoRequest photoRequest, PhotoVo photoVo, BucketVo bucketVo) throws Exception {
         Optional<Daily> daily = dailyReposiotry.findById(photoRequest.getDailyId());
         if (daily.isPresent()) {
             Photo photo = new Photo().builder()
@@ -36,7 +36,7 @@ public class PhotoService {
                     .longitude(photoVo.getLongitude())
                     .deleteStatus(DeleteStatus.exist)
                     // image Location을 PhotoS3Dto에서 받아와야한다.
-                    .image("location")
+                    .image(bucketVo.getImageLink())
                     .daily(daily.get())
                     .tag(photoRequestValidator.getStringTag(photoRequest.getTagListString()))
                     .build();
