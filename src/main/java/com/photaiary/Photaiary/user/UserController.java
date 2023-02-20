@@ -38,16 +38,13 @@ public class UserController {
 
 
     @ApiOperation(value = "로그인")
-    @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping(value = "/login")
-
     public ResponseEntity<DefaultRes> signin(@RequestBody LoginDto request) throws Exception { // SignResponseDto
         return new ResponseEntity<>(DefaultRes.res(signService.login(request)), HttpStatus.OK);
 
     }
 
     @ApiOperation(value = "회원 가입")
-    @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping(value = "/register")
     public ResponseEntity<DefaultRes> signup(@RequestBody SignRequestDto request) throws Exception {
         return new ResponseEntity<>(DefaultRes.res(signService.register(request)), HttpStatus.OK);
