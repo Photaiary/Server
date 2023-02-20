@@ -1,9 +1,6 @@
 package com.photaiary.Photaiary.user;
 
-import com.photaiary.Photaiary.user.dto.EmailCheckResponseDto;
-import com.photaiary.Photaiary.user.dto.ResponseDto;
-import com.photaiary.Photaiary.user.dto.SignRequestDto;
-import com.photaiary.Photaiary.user.dto.SignResponseDto;
+import com.photaiary.Photaiary.user.dto.*;
 import com.photaiary.Photaiary.user.security.JwtProvider;
 import com.photaiary.Photaiary.user.security.TokenDto;
 import com.photaiary.Photaiary.user.service.SignService;
@@ -13,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,7 +31,7 @@ public class UserController {
 
     @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping(value = "/login")
-    public ResponseEntity<SignResponseDto> signin(@RequestBody SignRequestDto request) throws Exception {
+    public ResponseEntity<SignResponseDto> signin(@RequestBody LoginDto request) throws Exception {
         return new ResponseEntity<>(signService.login(request), HttpStatus.OK);
     }
     @CrossOrigin(origins = "http://localhost:3000")
@@ -72,6 +70,12 @@ public class UserController {
         String authCode=emailService.sendEmail(emailMap.get("email"));
 
         return new EmailCheckResponseDto(true,authCode);
+    }
+
+    @GetMapping("/api/profile")
+    public ResponseEntity<SignResponseDto> getUserFromToken(HttpServletRequest request)throws Exception{
+        String email=(String)request.getAttribute("username");
+        return new ResponseEntity<>(signService.getUser(email),HttpStatus.OK);
     }
 
 

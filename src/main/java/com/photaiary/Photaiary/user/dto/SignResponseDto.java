@@ -17,8 +17,9 @@ import java.util.List;
 @NoArgsConstructor
 public class SignResponseDto{
 
-    private Long user_index;
+//    private boolean isSuccess=true;
 
+    private Long user_index;
 
     private String nickname;
 

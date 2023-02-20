@@ -132,17 +132,14 @@ public class JwtProvider {
     // 토큰 검증
     public boolean validateToken(String token) {
         try {
-            // Bearer 검증
-            if (!token.substring(0, "BEARER ".length()).equalsIgnoreCase("BEARER ")) {
+            Jws<Claims> claims = Jwts.parser().setSigningKey(accessSecretKey).parseClaimsJws(token);
+            if (claims.getBody().getExpiration().before(new Date())) {
                 return false;
-            } else {
-                token = token.split(" ")[1].trim();
             }
-            Jws<Claims> claims = Jwts.parserBuilder().setSigningKey(accessSecretKey).build().parseClaimsJws(token);
-            // 만료되었을 시 false
-            return !claims.getBody().getExpiration().before(new Date());
-        } catch (Exception e) {
+            return true;
+        } catch (JwtException | IllegalArgumentException e) {
             return false;
         }
     }
+
 }

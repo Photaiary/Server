@@ -1,5 +1,6 @@
 package com.photaiary.Photaiary.user.service;
 
+import com.photaiary.Photaiary.user.dto.LoginDto;
 import com.photaiary.Photaiary.user.dto.SignRequestDto;
 import com.photaiary.Photaiary.user.dto.SignResponseDto;
 import com.photaiary.Photaiary.user.entity.Authority;
@@ -30,7 +31,7 @@ public class SignService {
 
     private final JpaUserDetailsService userDetailsService;
 
-    public SignResponseDto login(SignRequestDto request) throws Exception {
+    public SignResponseDto login(LoginDto request) throws Exception {
         User user = userRepository.findByEmail(request.getEmail()).orElseThrow(() ->
                 new BadCredentialsException("잘못된 계정정보입니다."));
 
