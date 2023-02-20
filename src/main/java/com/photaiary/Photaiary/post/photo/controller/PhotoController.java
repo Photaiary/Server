@@ -6,6 +6,7 @@ import com.photaiary.Photaiary.post.photo.dto.PhotoRequest;
 import com.photaiary.Photaiary.post.photo.dto.PhotoS3Dto;
 import com.photaiary.Photaiary.post.photo.service.PhotoService;
 import com.photaiary.Photaiary.post.photo.vo.PhotoVo;
+import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -13,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/photo")
+@Api(tags ="3. 사진 관련 API")
 public class PhotoController {
     private final PhotoService photoService;
 
