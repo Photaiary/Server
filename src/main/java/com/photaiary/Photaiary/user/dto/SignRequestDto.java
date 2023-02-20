@@ -22,6 +22,4 @@ public class SignRequestDto {
     private String profileImage;
 
 
-
-
 }

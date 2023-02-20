@@ -35,7 +35,7 @@ public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExce
     @ExceptionHandler(Exception.class)
     public final ResponseEntity<Object> handleAllExceptions(Exception ex, WebRequest request){
         ExceptionResponse exceptionResponse =
-                new ExceptionResponse(new Date(), HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                new ExceptionResponse(false, new Date(), HttpStatus.INTERNAL_SERVER_ERROR.value(),
                         ex.getMessage(), request.getDescription(false));
 
         return new ResponseEntity(exceptionResponse, HttpStatus.INTERNAL_SERVER_ERROR); // 500 error
@@ -46,7 +46,7 @@ public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExce
                                                                   HttpStatus status,
                                                                   WebRequest request) {
         ExceptionResponse exceptionResponse =
-                new ExceptionResponse(new Date(), HttpStatus.BAD_REQUEST.value(),
+                new ExceptionResponse(false,new Date(), HttpStatus.BAD_REQUEST.value(),
                         "Validation Failed", ex.getBindingResult().toString());
 
         return new ResponseEntity(exceptionResponse, HttpStatus.BAD_REQUEST);

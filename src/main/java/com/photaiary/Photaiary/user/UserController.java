@@ -1,5 +1,6 @@
 package com.photaiary.Photaiary.user;
 
+import com.photaiary.Photaiary.global.DefaultRes;
 import com.photaiary.Photaiary.user.dto.EmailCheckResponseDto;
 import com.photaiary.Photaiary.user.dto.ResponseDto;
 import com.photaiary.Photaiary.user.dto.SignRequestDto;
@@ -8,6 +9,8 @@ import com.photaiary.Photaiary.user.security.JwtProvider;
 import com.photaiary.Photaiary.user.security.TokenDto;
 import com.photaiary.Photaiary.user.service.SignService;
 import com.photaiary.Photaiary.user.validation.EmailService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +22,7 @@ import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
+@Api(tags ="1. 유저 관련 API")
 public class UserController {
 
 
@@ -31,15 +35,18 @@ public class UserController {
 //    private final UserRepository userRepository;
 
 
+    @ApiOperation(value = "로그인")
     @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping(value = "/login")
-    public ResponseEntity<SignResponseDto> signin(@RequestBody SignRequestDto request) throws Exception {
-        return new ResponseEntity<>(signService.login(request), HttpStatus.OK);
+    public ResponseEntity<DefaultRes> signin(@RequestBody SignRequestDto request) throws Exception { // SignResponseDto
+        return new ResponseEntity<>(DefaultRes.res(signService.login(request)), HttpStatus.OK);
     }
+
+    @ApiOperation(value = "회원 가입")
     @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping(value = "/register")
-    public ResponseEntity<Boolean> signup(@RequestBody SignRequestDto request) throws Exception {
-        return new ResponseEntity<>(signService.register(request), HttpStatus.OK);
+    public ResponseEntity<DefaultRes> signup(@RequestBody SignRequestDto request) throws Exception {
+        return new ResponseEntity<>(DefaultRes.res(signService.register(request)), HttpStatus.OK);
     }
 
     //refresh토큰으로 access토큰 재발급 요청

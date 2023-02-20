@@ -37,21 +37,21 @@ public class PhotoErrorHandler {
 
     private ExceptionResponse handleNoUserError() {
         System.out.println(1);
-        return new ExceptionResponse(new Date(), HttpStatus.INTERNAL_SERVER_ERROR.value(), exception.getMessage(), webRequest.getDescription(false));
+        return new ExceptionResponse(false, new Date(), HttpStatus.INTERNAL_SERVER_ERROR.value(), exception.getMessage(), webRequest.getDescription(false));
     }
 
     private ExceptionResponse handleVoError() {
         System.out.println(2);
-        return new ExceptionResponse(new Date(), HttpStatus.INTERNAL_SERVER_ERROR.value(), exception.getMessage(), webRequest.getDescription(false));
+        return new ExceptionResponse(false, new Date(), HttpStatus.INTERNAL_SERVER_ERROR.value(), exception.getMessage(), webRequest.getDescription(false));
     }
 
     private ExceptionResponse handleNoLocationError() {
         System.out.println(3);
-        return new ExceptionResponse(new Date(), HttpStatus.INTERNAL_SERVER_ERROR.value(), exception.getMessage(), webRequest.getDescription(false));
+        return new ExceptionResponse(false, new Date(), HttpStatus.INTERNAL_SERVER_ERROR.value(), exception.getMessage(), webRequest.getDescription(false));
     }
 
     private ExceptionResponse handleFileConvertError() {
         System.out.println(4);
-        return new ExceptionResponse(new Date(), HttpStatus.INTERNAL_SERVER_ERROR.value(), exception.getMessage(), webRequest.getDescription(false));
+        return new ExceptionResponse(false, new Date(), HttpStatus.INTERNAL_SERVER_ERROR.value(), exception.getMessage(), webRequest.getDescription(false));
     }
 }
