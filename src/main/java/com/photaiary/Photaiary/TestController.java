@@ -17,10 +17,10 @@ import java.util.Map;
 
 
 @RestController
-@Api(tags ="Test API 입니다.")
+@Api(tags ="0. Test API ")
 public class TestController {
 
-    @ApiOperation(value = "스웨거 테스트")
+    @ApiOperation(value = "기본 테스트 1")
     @ApiResponses({  // Response Message에 대한 Swagger 설명
             @ApiResponse(code = 200, message = "Success"),
             @ApiResponse(code = 400, message = "Bad Request"),
@@ -31,15 +31,19 @@ public class TestController {
         return new ResponseEntity<>(DefaultRes.res("Swagger Hello World!"), HttpStatus.OK);
     }
 
+    @ApiOperation(value = "docker 테스트")
     @GetMapping("/test/docker")
     public String dockerTest(){
         return "진짜 마지막 도커 테스트";
     }
 
+    @ApiOperation(value = "webhook 테스트")
     @GetMapping("/test/webhook")
     public String webhookTest(){
         return "webhook";
     }
+
+    @ApiOperation(value = "기본 테스트 2")
     @GetMapping("/test/{hi}")
     public ResponseEntity<DefaultRes> test(@PathVariable String hi) {
         Map<Integer, String> map = new HashMap<>();
