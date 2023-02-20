@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.net.http.HttpHeaders;
 
 @RequiredArgsConstructor
 @RestController
@@ -35,10 +36,9 @@ public class S3UploadTestController {
     }
 
     @ApiOperation(value = "다운로드")
-    @GetMapping("/download")
-    public ResponseEntity<DefaultRes> downloadFile(String fileUrl) throws IOException {
-        String filePath = fileUrl.substring(52);
-        return new ResponseEntity<>(DefaultRes.res(s3UploadComponent.downloadFile(filePath)), HttpStatus.OK);
+    @GetMapping("/download")   // ex) http://localhost:8080/s3/download?key=users/null/2023-02-19%2016:45:27%20test.jpg
+    public ResponseEntity<byte[]> downloadFile(@RequestParam String key) throws IOException {
+        return s3UploadComponent.downloadFile(key);
     }
 
 }
