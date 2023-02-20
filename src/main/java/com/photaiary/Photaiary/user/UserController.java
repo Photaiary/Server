@@ -31,12 +31,12 @@ public class UserController {
 //    private final UserRepository userRepository;
 
 
-
+    @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping(value = "/login")
     public ResponseEntity<SignResponseDto> signin(@RequestBody SignRequestDto request) throws Exception {
         return new ResponseEntity<>(signService.login(request), HttpStatus.OK);
     }
-
+    @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping(value = "/register")
     public ResponseEntity<Boolean> signup(@RequestBody SignRequestDto request) throws Exception {
         return new ResponseEntity<>(signService.register(request), HttpStatus.OK);
