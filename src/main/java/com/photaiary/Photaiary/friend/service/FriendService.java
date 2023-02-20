@@ -3,6 +3,7 @@ package com.photaiary.Photaiary.friend.service;
 import com.photaiary.Photaiary.friend.dto.FriendFollowRequestDto;
 import com.photaiary.Photaiary.friend.entity.Friend;
 import com.photaiary.Photaiary.friend.entity.FriendRepository;
+import com.photaiary.Photaiary.friend.exception.custom.VoException;
 import com.photaiary.Photaiary.user.entity.User;
 import com.photaiary.Photaiary.user.entity.UserRepository;
 import com.photaiary.Photaiary.user.security.JwtProvider;
@@ -33,50 +34,66 @@ public class FriendService {
      * 4.Friend Entity에서 fromUser와 toUser의 fetch=LAZY 일때, JPA를 통한 조회 변경이 안됨.
      */
     @Transactional
-    public HttpStatus makeFriend(FriendFollowRequestDto requestDto) throws Exception {
+    public HttpStatus makeFriend(FriendFollowRequestDto requestDto) throws Exception { //😊
         // 상대방&내 회원 정보 존재 확인 In DB
-
-        String fromUserEmail = jwtProvider.getEmail("eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhbGx5MTAwOEBuYXZlci5jb20iLCJyb2xlcyI6W3sibmFtZSI6IlJPTEVfVVNFUiJ9XSwiaWF0IjoxNjc2NzkzNTQ3LCJleHAiOjE2NzY3OTUzNDd9.5rGmJONF1Cenzpscwv7J2DyW6M2ULG0M_uyX45DtJvE");
+        String fromUserEmail = jwtProvider.getEmail("eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI0QG5hdmVyLmNvbSIsInJvbGVzIjpbeyJuYW1lIjoiUk9MRV9VU0VSIn1dLCJpYXQiOjE2NzY4ODQ0OTAsImV4cCI6MTY3Njg4NjI5MH0.zn_-OAX_LhcXlUhR57SbAMnBPd2_kbek2NGBCJCGEbE");
         Optional<User> fromUser = userRepository.findByEmail(fromUserEmail);
 
-        String toUserEmail = requestDto.getToUserEamil();
-        Optional<User> toUser = userRepository.findByEmail(toUserEmail);
+        //내 회원 정보 여부 확인은 필요 없지 않을까?
+        boolean cantContinue = requestDto.getToUserEmail().equals(fromUserEmail);
+        if(cantContinue==false){
 
-        // 엑세스 토큰을 발급 받은 시점부터 fromUser는 이미 회원임이 증명되었다. 즉, 상대방이 없는 것만 확인하면 됨.
-        if (toUser.isPresent()) { // 상대가 회원인가? (차후: 로그인 개발하고 token을 통한 구현으로 refactoring)
-            // YES
-            List<Friend> isFriend = friendRepository.findAll();
-            Iterator<Friend> iterFriends = isFriend.iterator();
+            String toUserEmail = requestDto.getToUserEmail();
+            Optional<User> toUser = userRepository.findByEmail(toUserEmail);
 
-            while (iterFriends.hasNext()) {
+            boolean isFriend;
 
-                Friend friend = iterFriends.next();
+            if (toUser.isPresent()) { // 상대가 회원인가?
+                // YES
+                Friend requestedFriend = Friend.builder()
+                        .toUser(toUser.get())
+                        .fromUser(fromUser.get())
+                        .build();
 
-                if (friend.equals(requestDto) ) { // 이미 친구?
-                    // YES
-                    return HttpStatus.BAD_REQUEST;
+                List<Friend> friends = friendRepository.findAll();
+                Iterator<Friend> iterFriends = friends.iterator();
+
+                while (iterFriends.hasNext()) {
+
+                    Friend iterFriend = iterFriends.next();
+
+                    isFriend = (
+                            (toUserEmail.equals(iterFriend.getToUser().getEmail()))
+                                    &&(fromUserEmail.equals(iterFriend.getFromUser().getEmail()))
+                    );
+
+                    if (isFriend) { // 이미 친구?
+                        // YES
+                        return HttpStatus.BAD_REQUEST;
+                    }
                 }
+
+                //생성
+                friendRepository.save(Friend.builder()
+                        .toUser(toUser.get())
+                        .fromUser(fromUser.get())
+                        .build());
+
+                return HttpStatus.OK;
             }
-
-            //생성
-            friendRepository.save(Friend.builder()
-                    .toUser(toUser.get())
-                    .fromUser(fromUser.get())
-                    .build());
-
-            return HttpStatus.OK;
+            // CASE: 존재하지 않는 회원일 경우 (UserNotFoundException)
+            return HttpStatus.NOT_FOUND;
         }
-        // CASE: 존재하지 않는 회원일 경우 (UserNotFoundException)
-        return HttpStatus.NOT_FOUND;
+        return null;
     }
 
     @Transactional
-    public HttpStatus unFollow(FriendFollowRequestDto requestDto) {
+    public HttpStatus unFollow(FriendFollowRequestDto requestDto) throws Exception{// 😊
         // 상대방&내 회원 정보 존재 확인 In DB (If not exist, then impossible!)
-        String fromUserEmail = jwtProvider.getEmail("eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhbGx5MTAwOEBuYXZlci5jb20iLCJyb2xlcyI6W3sibmFtZSI6IlJPTEVfVVNFUiJ9XSwiaWF0IjoxNjc2NzkzNTQ3LCJleHAiOjE2NzY3OTUzNDd9.5rGmJONF1Cenzpscwv7J2DyW6M2ULG0M_uyX45DtJvE");
+        String fromUserEmail = jwtProvider.getEmail("eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxQG5hdmVyLmNvbSIsInJvbGVzIjpbeyJuYW1lIjoiUk9MRV9VU0VSIn1dLCJpYXQiOjE2NzY4MTAxODIsImV4cCI6MTY3NjgxMTk4Mn0.6OUA3p_E6fCTlP7bJYjTHdKNBfZLzAMgHLSNAiU90hc");
         Optional<User> fromUser = userRepository.findByEmail(fromUserEmail);
 
-        String toUserEmail = requestDto.getToUserEamil();
+        String toUserEmail = requestDto.getToUserEmail();
         Optional<User> toUser = userRepository.findByEmail(toUserEmail);
 
         boolean isFriend;
@@ -89,21 +106,15 @@ public class FriendService {
             Iterator<Friend> iterFriends = friends.iterator();
 
 
-            //이 반복문 stream() 구조 탐색해도 괜찮을듯?
-            //자료구조는 적용이 될까? 되면 어떤식으로 코드가 작성될까?
+            //이 반복문 stream() 구조 탐색해도 되려나?
             while (iterFriends.hasNext()) {
 
                 Friend iterFriend = iterFriends.next();
 
-                // Requested friend Dto
-                FriendFollowRequestDto iterDto = FriendFollowRequestDto.builder()
-                        .toUserEamil(toUserEmail)
-                        .fromUserToken("나는야 fromUser의 토큰 값")
-                        .build();
+                // 친구관계 확인 (리팩토링 0219 07:24)
+                isFriend = ((toUserEmail.equals(iterFriend.getToUser().getEmail()))
+                        &&(fromUserEmail.equals(iterFriend.getFromUser().getEmail())));
 
-                // 친구관계 확인
-                isFriend = (iterDto.getToUserEamil() == requestDto.getToUserEamil())
-                        && (iterDto.getFromUserToken() == requestDto.getFromUserToken());
 
                 if (isFriend) { // Already friend?
                     // YES!(possible to deleting)
@@ -111,6 +122,7 @@ public class FriendService {
 
                     return HttpStatus.OK;
                 }
+                //⚠️[ISSUE: O(N) -> 정보가 많을 수록 느려진다. 어떻게 할 것 인가?]
             }
 
             // unfollow is impossible. cuz the relationship between fromUser and toUser is not friend.
@@ -121,29 +133,24 @@ public class FriendService {
     }
 
     @Transactional
-    public List<String> readFriends(String token){ //Long 에서 String(토큰)으로 변경
+    public List<String> readFriends(String token){ //Long 에서 String(토큰)으로 변경(리팩토링 0219 07:26) 😊
         // Check myUserId(fromUser) exist in useDB. (If not exist, then impossible!) (second develop -> using user token)
         List<String> myFriends= new ArrayList<>();
-        User fromUser = userRepository.findByEmail(token).get();
+        String fromUserEmail = jwtProvider.getEmail("eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxQG5hdmVyLmNvbSIsInJvbGVzIjpbeyJuYW1lIjoiUk9MRV9VU0VSIn1dLCJpYXQiOjE2NzY4MTAxODIsImV4cCI6MTY3NjgxMTk4Mn0.6OUA3p_E6fCTlP7bJYjTHdKNBfZLzAMgHLSNAiU90hc");
+        Optional<User> fromUser = userRepository.findByEmail(fromUserEmail);
 
-        //Is exist fromUSer information in user DataBase?
-        if (fromUser != null){ //yes(In userDB: myUserId)
+        List<Friend> friends = friendRepository.findAll();
+        Iterator<Friend> iterFriends = friends.iterator();
 
-            List<Friend> friends = friendRepository.findAll();
-            Iterator<Friend> iterFriends = friends.iterator();
+        while (iterFriends.hasNext()) {
+            Friend iterFriend = iterFriends.next();
 
-            while (iterFriends.hasNext()) {
-                Friend iterFriend = iterFriends.next();
-
-                //Find a friend of the myUser.
-                if (iterFriend.getFromUser().getUserIndex() == token) { //yes( unique case )
-                    myFriends.add(iterFriend.getToUser().getNickname());
-                }
+            //Find a friend of the myUser.
+            //필요한 것 : iterFriend의 토큰 값 -> 대신 토큰으로 이메일을 찾아서 이메일 비교
+            if (iterFriend.getFromUser().getEmail().equals(fromUserEmail)) { //yes( unique case )
+                myFriends.add(iterFriend.getToUser().getNickname());
             }
-            return myFriends; // the friends of the myUser (LIST TYPE)
         }
-
-        return null; // myUserId is null
+        return myFriends; // the friends of the myUser (LIST TYPE)
     }
 }
-// 예외 핸들링 잊지 말고 리팩토링 하자.

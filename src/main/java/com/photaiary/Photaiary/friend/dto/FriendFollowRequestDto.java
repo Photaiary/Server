@@ -9,13 +9,13 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class FriendFollowRequestDto {
 
-    private String toUserEamil;
+    private String toUserEmail;
     private String fromUserToken;
 
 
     @Builder
-    public FriendFollowRequestDto(String toUserEamil, String fromUserToken) {
-        this.toUserEamil = toUserEamil;
+    public FriendFollowRequestDto(String toUserEmail, String fromUserToken) {
+        this.toUserEmail = toUserEmail;
         this.fromUserToken = fromUserToken;
     }
 }

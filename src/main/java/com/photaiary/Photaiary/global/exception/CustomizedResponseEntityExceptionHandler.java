@@ -1,5 +1,7 @@
 package com.photaiary.Photaiary.global.exception;
 
+import com.photaiary.Photaiary.friend.exception.FriendErrorHandler;
+import com.photaiary.Photaiary.friend.exception.custom.VoException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +16,11 @@ import java.util.Date;
 @RestController
 @ControllerAdvice // 모든 Controller 가 실행될 때 반드시 실행됨
 public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
+
+    @ExceptionHandler(VoException.class)
+    public final ResponseEntity<Object> handleUserNotFoundExceptions(Exception ex, WebRequest request){
+        FriendErrorHandler friendErrorHandler =
+    }
 
     @ExceptionHandler(Exception.class)
     public final ResponseEntity<Object> handleAllExceptions(Exception ex, WebRequest request){
