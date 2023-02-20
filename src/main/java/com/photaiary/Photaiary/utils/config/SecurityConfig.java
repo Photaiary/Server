@@ -1,6 +1,8 @@
-package com.photaiary.Photaiary.user.security;
+package com.photaiary.Photaiary.utils.config;
 
 
+import com.photaiary.Photaiary.user.security.JwtAuthenticationFilter;
+import com.photaiary.Photaiary.user.security.JwtProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
