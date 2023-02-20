@@ -69,7 +69,7 @@ public class FriendController {
     }
 
     @GetMapping("/friend/list/{userId}")
-    public Map<Integer, Object> readFriends(@PathVariable String userId) { //userId is token
+    public Map<Integer, Object> readFriends(@PathVariable String userId) throws Exception{ //userId is token
         Map<Integer, Object> response = new HashMap<>();
         Map<String, Object> data = new HashMap<>();
 

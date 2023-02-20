@@ -1,5 +1,7 @@
 package com.photaiary.Photaiary.global.exception;
 
+import com.photaiary.Photaiary.friend.exception.FriendErrorHandler;
+import com.photaiary.Photaiary.friend.exception.custom.VoException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,17 +17,24 @@ import java.util.Date;
 @ControllerAdvice // 모든 Controller 가 실행될 때 반드시 실행됨
 public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
 
-    @ExceptionHandler(Exception.class)
-    public final ResponseEntity<Object> handleAllExceptions(Exception ex, WebRequest request){
-        ExceptionResponse exceptionResponse =
-                new ExceptionResponse(new Date(), HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                        ex.getMessage(), request.getDescription(false));
-
-        return new ResponseEntity(exceptionResponse, HttpStatus.INTERNAL_SERVER_ERROR); // 500 error
+//    @ExceptionHandler(Exception.class)
+//    public final ResponseEntity<Object> handleAllExceptions(Exception ex, WebRequest request){
+//        ExceptionResponse exceptionResponse =
+//                new ExceptionResponse(new Date(), HttpStatus.INTERNAL_SERVER_ERROR.value(),
+//                        ex.getMessage(), request.getDescription(false));
+//
+//        return new ResponseEntity(exceptionResponse, HttpStatus.INTERNAL_SERVER_ERROR); // 500 error
+//    }
+    @ExceptionHandler(VoException.class)
+    public final ResponseEntity<Object> handlePhotoExceptions(Exception ex, WebRequest request) {
+        FriendErrorHandler friendErrorHandler = new FriendErrorHandler(ex, request);
+        ExceptionResponse exceptionResponse = friendErrorHandler.handleError();
+        return new ResponseEntity(exceptionResponse, HttpStatus.NOT_FOUND); // 500 error
+        //이거 not_found맞나?
     }
 
 
-    @Override  // 부모가 가진 method를 재정의
+    @Override // 부모가 가진 method를 재정의
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
                                                                   HttpHeaders headers,
                                                                   HttpStatus status,

@@ -9,12 +9,10 @@ import lombok.Data;
 public class FriendFollowRequestDto {
     private User fromUser;
     private User toUser;
-    private Status status;
 
     @Builder
     public FriendFollowRequestDto(User fromUser, User toUser, Status status) {
         this.fromUser = fromUser;
         this.toUser = toUser;
-        this.status = status;
     }
 }

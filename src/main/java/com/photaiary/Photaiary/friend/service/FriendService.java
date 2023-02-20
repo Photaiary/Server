@@ -27,18 +27,11 @@ public class FriendService {
     private final FriendRepository friendRepository;
     private final UserRepository userRepository;
     private final JwtProvider jwtProvider;
-    private final SignService signService;
-    /**
-     * #Issue[Friend About addFollow Method]:
-     * 1.해결
-     * 2.service에서 controller로 반환할 때, 데이터를 옮기는 Dto 클래스를 사용해야 좋은 코드가 아닐까? (현재는 상태코드를 반환해주었음)
-     * 3.해결
-     * 4.Friend Entity에서 fromUser와 toUser의 fetch=LAZY 일때, JPA를 통한 조회 변경이 안됨.
-     */
+
     @Transactional
     public HttpStatus makeFriend(FriendFollowRequestDto requestDto) throws Exception { //😊
         // 상대방&내 회원 정보 존재 확인 In DB
-        String fromUserEmail = jwtProvider.getEmail("eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxQG5hdmVyLmNvbSIsInJvbGVzIjpbeyJuYW1lIjoiUk9MRV9VU0VSIn1dLCJpYXQiOjE2NzY4MTAxODIsImV4cCI6MTY3NjgxMTk4Mn0.6OUA3p_E6fCTlP7bJYjTHdKNBfZLzAMgHLSNAiU90hc");
+        String fromUserEmail = jwtProvider.getEmail("eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxQG5hdmVyLmNvbSIsInJvbGVzIjpbeyJuYW1lIjoiUk9MRV9VU0VSIn1dLCJpYXQiOjE2NzY4ODM5NjUsImV4cCI6MTY3Njg4NTc2NX0.W-pt2_lmWL1lbxdmc2SyqdW4iwolVd90070yPrSVVGw");
         Optional<User> fromUser = userRepository.findByEmail(fromUserEmail);
 
         //내 회원 정보 여부 확인은 필요 없지 않을까?
@@ -92,7 +85,7 @@ public class FriendService {
     @Transactional
     public HttpStatus unFollow(FriendFollowRequestDto requestDto) throws Exception{// 😊
         // 상대방&내 회원 정보 존재 확인 In DB (If not exist, then impossible!)
-        String fromUserEmail = jwtProvider.getEmail("eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxQG5hdmVyLmNvbSIsInJvbGVzIjpbeyJuYW1lIjoiUk9MRV9VU0VSIn1dLCJpYXQiOjE2NzY4MTAxODIsImV4cCI6MTY3NjgxMTk4Mn0.6OUA3p_E6fCTlP7bJYjTHdKNBfZLzAMgHLSNAiU90hc");
+        String fromUserEmail = jwtProvider.getEmail("eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxQG5hdmVyLmNvbSIsInJvbGVzIjpbeyJuYW1lIjoiUk9MRV9VU0VSIn1dLCJpYXQiOjE2NzY4ODM5NjUsImV4cCI6MTY3Njg4NTc2NX0.W-pt2_lmWL1lbxdmc2SyqdW4iwolVd90070yPrSVVGw");
         Optional<User> fromUser = userRepository.findByEmail(fromUserEmail);
 
         String toUserEmail = requestDto.getToUserEmail();
@@ -138,7 +131,7 @@ public class FriendService {
     public List<String> readFriends(String token){ //Long 에서 String(토큰)으로 변경(리팩토링 0219 07:26) 😊
         // Check myUserId(fromUser) exist in useDB. (If not exist, then impossible!) (second develop -> using user token)
         List<String> myFriends= new ArrayList<>();
-        String fromUserEmail = jwtProvider.getEmail("eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxQG5hdmVyLmNvbSIsInJvbGVzIjpbeyJuYW1lIjoiUk9MRV9VU0VSIn1dLCJpYXQiOjE2NzY4MTAxODIsImV4cCI6MTY3NjgxMTk4Mn0.6OUA3p_E6fCTlP7bJYjTHdKNBfZLzAMgHLSNAiU90hc");
+        String fromUserEmail = jwtProvider.getEmail("eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxQG5hdmVyLmNvbSIsInJvbGVzIjpbeyJuYW1lIjoiUk9MRV9VU0VSIn1dLCJpYXQiOjE2NzY4ODM5NjUsImV4cCI6MTY3Njg4NTc2NX0.W-pt2_lmWL1lbxdmc2SyqdW4iwolVd90070yPrSVVGw");
         Optional<User> fromUser = userRepository.findByEmail(fromUserEmail);
 
         List<Friend> friends = friendRepository.findAll();

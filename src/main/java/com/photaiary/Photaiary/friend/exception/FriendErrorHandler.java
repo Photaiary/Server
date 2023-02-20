@@ -15,9 +15,9 @@ public class FriendErrorHandler {
     private Exception exception;
     private WebRequest request;
 
-    public FriendErrorHandler(Exception exception, WebRequest request) {
-        this.exception = exception;
-        this.request = request;
+    public FriendErrorHandler(Exception e, WebRequest webRequest) {
+        this.exception = e;
+        this.request = webRequest;
     }
 
     public ExceptionResponse handleError(){
@@ -28,8 +28,8 @@ public class FriendErrorHandler {
         }
     }
 
-
     public ExceptionResponse handleUserNotFound(){
+        System.out.println(1);
         ExceptionResponse exceptionResponse
                 = new ExceptionResponse(new Date(), HttpStatus.NOT_FOUND.value(), exception.getMessage(), request.getDescription(false));
         return exceptionResponse;
