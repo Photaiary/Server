@@ -72,23 +72,17 @@ public class FriendController {
     //@ApiOperation(value="친구 목록 보기")
     @GetMapping("/friend/list/{userId}")
 
-    public ResponseEntity<Map<Integer, Object>> readFriends(@PathVariable String userId) { //userId is token
+    public ResponseEntity<Map<Integer, Object>> readFriends(@PathVariable String userId) throws Exception{ //userId is token
         Map<Integer, Object> response = new HashMap<>();
         Map<String, Object> data = new HashMap<>();
 
         List<String> myFriends = service.readFriends(userId);
 
-        if (myFriends == null) {
-            data.put("isSuccess", "false");
-            response.put(HttpStatus.BAD_REQUEST.value(), data);
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-        } else if (myFriends != null) {
-            data.put("isSuccess", "true");
-            data.put("friend", myFriends);
-            response.put(HttpStatus.OK.value(), data);
-            return ResponseEntity.status(HttpStatus.OK).body(response);
-        }
-        return null;
+        data.put("isSuccess", "true");
+        data.put("friend", myFriends);
+        response.put(HttpStatus.OK.value(), data);
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 }
     //예외 처리 -> 컨트롤러 및 서비스계층에서 하지않고 throws Exception을 통해서 조금 더 객체적으로 설계해보기.
