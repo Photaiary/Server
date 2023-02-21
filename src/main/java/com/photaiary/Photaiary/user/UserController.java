@@ -4,6 +4,8 @@ package com.photaiary.Photaiary.user;
 import com.photaiary.Photaiary.global.DefaultRes;
 import com.photaiary.Photaiary.user.dto.LoginDto;
 import com.photaiary.Photaiary.user.dto.SignRequestDto;
+import com.photaiary.Photaiary.user.dto.SignResponseDto;
+import com.photaiary.Photaiary.user.security.JwtAuthenticationFilter;
 import com.photaiary.Photaiary.user.security.JwtProvider;
 import com.photaiary.Photaiary.user.security.TokenDto;
 import com.photaiary.Photaiary.user.service.SignService;
@@ -13,7 +15,6 @@ import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -36,6 +37,7 @@ public class UserController {
 
 //    private final UserRepository userRepository;
 
+    private JwtAuthenticationFilter jwtAuthenticationFilter;
 
     @ApiOperation(value = "로그인")
     @PostMapping(value = "/login")
@@ -55,10 +57,10 @@ public class UserController {
     public ResponseEntity<TokenDto> refresh(@RequestBody HashMap<String, String> refreshTokenMap) throws Exception {
         return new ResponseEntity<>( signService.validateRefreshToken(refreshTokenMap.get("refreshToken")), HttpStatus.OK);
     }
-//    @PostMapping("/user/get")
-//    public ResponseEntity<SignResponseDto> getUser(@RequestBody Map<String,String> emailMap) throws Exception {
-//        return new ResponseEntity<>( signService.getUser(emailMap.get("email")), HttpStatus.OK);
-//    }
+    @PostMapping("/user/get")
+    public ResponseEntity<SignResponseDto> getUsger(@RequestBody Map<String,String> emailMap) throws Exception {
+        return new ResponseEntity<>( signService.getUser(emailMap.get("email")), HttpStatus.OK);
+    }
 
 //    @GetMapping("/admin/get")
 //    public ResponseEntity<SignResponseDto> getUserForAdmin(@RequestParam String account) throws Exception {
@@ -80,15 +82,44 @@ public class UserController {
         return new ResponseEntity<>(DefaultRes.res(authCode),HttpStatus.OK);
     }
 
-//    @PostMapping("/update/theme")
-//    public ResponseEntity<SignResponseDto> updateTheme(@RequestBody HashMap<String, String> themeMap)throws Exception
-//    {
-//        String theme=signService.idChk(themeMap.get("theme"));
-//
-//        return new ResponseEntity<>(signService.getUser(email),HttpStatus.OK);
-//    }
+    @PostMapping("/update/theme")
+    public ResponseEntity<DefaultRes> updateTheme(@RequestBody HashMap<String, String> themeMap)throws Exception
+    {
+        String theme=themeMap.get("theme");
+
+        return new ResponseEntity<>(DefaultRes.res(signService.updateTheme(theme)),HttpStatus.OK);
+    }
+
+    @PostMapping("/update/nickname")
+    public ResponseEntity<DefaultRes> updateNickname(@RequestBody HashMap<String, String> nicknameMap)throws Exception
+    {
+        String nickname=nicknameMap.get("nickname");
+
+        return new ResponseEntity<>(DefaultRes.res(signService.updateNickname(nickname)),HttpStatus.OK);
+    }
+
+    @PostMapping("/update/name")
+    public ResponseEntity<DefaultRes> updateName(@RequestBody HashMap<String, String> nameMap)throws Exception
+    {
+        String name=nameMap.get("name");
+
+        return new ResponseEntity<>(DefaultRes.res(signService.updateName(name)),HttpStatus.OK);
+    }
+    @PostMapping("/update/password")
+    public ResponseEntity<DefaultRes> updatePassword(@RequestBody HashMap<String, String> passwordMap)throws Exception
+    {
+        String password=passwordMap.get("password");
+
+        return new ResponseEntity<>(DefaultRes.res(signService.updatePassword(password)),HttpStatus.OK);
+    }
 
 
+    @PostMapping("/update/birthdate")
+    public ResponseEntity<DefaultRes> updateBirthdate(@RequestBody HashMap<String, String> birthdateMap)throws Exception
+    {
+        String birthdate=birthdateMap.get("birthdate");
 
+        return new ResponseEntity<>(DefaultRes.res(signService.updateBirthdate(birthdate)),HttpStatus.OK);
+    }
 
 }

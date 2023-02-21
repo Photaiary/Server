@@ -132,6 +132,7 @@ public class JwtProvider {
     // 토큰 검증
     public boolean validateToken(String token) {
         try {
+
             // Bearer 검증
             if (!token.substring(0, "BEARER ".length()).equalsIgnoreCase("BEARER ")) {
                 return false;
