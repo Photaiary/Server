@@ -30,7 +30,7 @@ public class FriendController {
     private final FriendService service;
 
     //@ApiOperation(value="친구 요청(팔로우)")
-    @PostMapping("/friend/follow")
+    @PostMapping("/friend/follow")//👨‍💻
     public ResponseEntity<Map<Integer, Object>> addFollow(@RequestBody FriendFollowRequestDto requestDto) throws Exception {
         Map<Integer, Object> response = new HashMap<>();
         Map<String, String> data = new HashMap<>();
