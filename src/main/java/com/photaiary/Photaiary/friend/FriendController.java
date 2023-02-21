@@ -52,21 +52,10 @@ public class FriendController {
 
         HttpStatus result = service.unFollow(requestDto);
 
-        if (result == HttpStatus.NOT_FOUND) {
-            data.put("isDelete", "false");
-            data.put("message", "친구가 존재하지 않습니다");
-            response.put(HttpStatus.NOT_FOUND.value(), data);
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
-        } else if (result == HttpStatus.BAD_REQUEST) {
-            data.put("isDelete", "false");
-            data.put("message", "친구 삭제 요청이 실패하였습니다");
-            response.put(HttpStatus.BAD_REQUEST.value(), data);
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-        } else {
-            data.put("isDelete", "true");
-            response.put(HttpStatus.OK.value(), data);
-            return ResponseEntity.status(HttpStatus.OK).body(response);
-        }
+        data.put("isDelete", "true");
+        response.put(HttpStatus.OK.value(), data);
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     //@ApiOperation(value="친구 목록 보기")
