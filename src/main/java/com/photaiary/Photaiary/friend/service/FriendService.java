@@ -3,7 +3,8 @@ package com.photaiary.Photaiary.friend.service;
 import com.photaiary.Photaiary.friend.dto.FriendFollowRequestDto;
 import com.photaiary.Photaiary.friend.entity.Friend;
 import com.photaiary.Photaiary.friend.entity.FriendRepository;
-import com.photaiary.Photaiary.friend.exception.custom.VoException;
+import com.photaiary.Photaiary.friend.exception.custom.AlreadyInitializedException;
+import com.photaiary.Photaiary.friend.exception.custom.ToUserNotFoundException;
 import com.photaiary.Photaiary.user.entity.User;
 import com.photaiary.Photaiary.user.entity.UserRepository;
 import com.photaiary.Photaiary.user.security.JwtProvider;
@@ -26,16 +27,9 @@ public class FriendService {
     private final UserRepository userRepository;
     private final JwtProvider jwtProvider;
     private final SignService signService;
-    /**
-     * #Issue[Friend About addFollow Method]:
-     * 1.해결
-     * 2.service에서 controller로 반환할 때, 데이터를 옮기는 Dto 클래스를 사용해야 좋은 코드가 아닐까? (현재는 상태코드를 반환해주었음)
-     * 3.해결
-     * 4.Friend Entity에서 fromUser와 toUser의 fetch=LAZY 일때, JPA를 통한 조회 변경이 안됨.
-     */
     @Transactional
     public HttpStatus makeFriend(FriendFollowRequestDto requestDto) throws Exception { //😊
-        // 상대방&내 회원 정보 존재 확인 In DB
+        // 상대방&내 회원 정보 존재 확인
         String fromUserEmail = jwtProvider.getEmail(requestDto.getFromUserToken());
         Optional<User> fromUser = userRepository.findByEmail(fromUserEmail);
 
@@ -65,7 +59,8 @@ public class FriendService {
 
                     if (isFriend) { // 이미 친구?
                         // YES
-                        return HttpStatus.BAD_REQUEST;
+                        throw new AlreadyInitializedException("이미 존재하는 친구입니다.");
+                        //return HttpStatus.BAD_REQUEST;
                     }
                 }
 
@@ -76,9 +71,12 @@ public class FriendService {
                         .build());
 
                 return HttpStatus.OK;
+            } else if (toUser.isEmpty()) {
+                throw  new ToUserNotFoundException("상대방이 존재 x");
             }
-            // CASE: 존재하지 않는 회원일 경우 (UserNotFoundException)
-            return HttpStatus.NOT_FOUND;
+        // CASE: 존재하지 않는 회원일 경우 (UserNotFoundException)
+            //return HttpStatus.NOT_FOUND;
+        return null;
     }
 
     @Transactional

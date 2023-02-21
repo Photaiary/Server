@@ -1,7 +1,6 @@
 package com.photaiary.Photaiary.friend;
 
 import com.photaiary.Photaiary.friend.dto.FriendFollowRequestDto;
-import com.photaiary.Photaiary.friend.exception.custom.UserNotFoundException;
 import com.photaiary.Photaiary.friend.service.FriendService;
 import com.photaiary.Photaiary.user.entity.User;
 import io.swagger.annotations.Api;
@@ -16,7 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-@Api(tags={"4.친구 관련 API"}, description = "FriendController")
+//@Api(tags={"4.친구 관련 API"}, description = "FriendController")
 @RestController
 @RequiredArgsConstructor
 
@@ -30,7 +29,7 @@ public class FriendController {
 
     private final FriendService service;
 
-    @ApiOperation(value="친구 요청(팔로우)")
+    //@ApiOperation(value="친구 요청(팔로우)")
     @PostMapping("/friend/follow")
     public ResponseEntity<Map<Integer, Object>> addFollow(@RequestBody FriendFollowRequestDto requestDto) throws Exception {
         Map<Integer, Object> response = new HashMap<>();
@@ -38,26 +37,14 @@ public class FriendController {
 
         HttpStatus result = service.makeFriend(requestDto);
 
-        //if (result == HttpStatus.BAD_REQUEST
-        //        || result == null) {
-        //    data.put("isSuccess", "false");
-        //    data.put("message", "친구 요청이 실패하였습니다");
-        //    response.put(HttpStatus.BAD_REQUEST.value(), data);
-        //    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-        //} else if (result == HttpStatus.NOT_FOUND) {
-        //    data.put("isSuccess", "false");
-        //    data.put("message", "친구가 존재하지 않습니다");
-        //    response.put(HttpStatus.NOT_FOUND.value(), data);
-        //    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
-//
-        //} else {
-            data.put("isSuccess", "true");
-            response.put(HttpStatus.OK.value(), data);
-            return ResponseEntity.status(HttpStatus.OK).body(response);
-        //}
+
+          data.put("isSuccess", "true");
+          response.put(HttpStatus.OK.value(), data);
+          return ResponseEntity.status(HttpStatus.OK).body(response);
+
     }
 
-    @ApiOperation(value="친구 삭제")
+    //@ApiOperation(value="친구 삭제")
     @PostMapping("/friend/unfollow")
     public ResponseEntity<Map<Integer, Object>> unFollow(@RequestBody FriendFollowRequestDto requestDto) throws Exception {
         Map<Integer, Object> response = new HashMap<>();
@@ -83,7 +70,7 @@ public class FriendController {
         }
     }
 
-    @ApiOperation(value="친구 목록 보기")
+    //@ApiOperation(value="친구 목록 보기")
     @GetMapping("/friend/list/{userId}")
     public ResponseEntity<Map<Integer, Object>> readFriends(@PathVariable String userId) { //userId is token
         Map<Integer, Object> response = new HashMap<>();
