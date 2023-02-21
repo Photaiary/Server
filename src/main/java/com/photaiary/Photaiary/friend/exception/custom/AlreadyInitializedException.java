@@ -3,9 +3,8 @@ package com.photaiary.Photaiary.friend.exception.custom;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
-public class UserNotFoundException extends VoException{
-    public UserNotFoundException(String message) {
+public class AlreadyInitializedException extends CustomException{
+    public AlreadyInitializedException(String message) {
         super(message);
     }
 }
-

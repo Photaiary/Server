@@ -18,3 +18,4 @@ public class FriendFollowRequestDto {
         this.fromUserToken = fromUserToken;
     }
 }
+

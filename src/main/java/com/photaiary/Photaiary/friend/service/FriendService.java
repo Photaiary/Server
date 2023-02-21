@@ -3,15 +3,13 @@ package com.photaiary.Photaiary.friend.service;
 import com.photaiary.Photaiary.friend.dto.FriendFollowRequestDto;
 import com.photaiary.Photaiary.friend.entity.Friend;
 import com.photaiary.Photaiary.friend.entity.FriendRepository;
-import com.photaiary.Photaiary.user.dto.SignResponseDto;
+import com.photaiary.Photaiary.friend.exception.custom.AlreadyInitializedException;
+import com.photaiary.Photaiary.friend.exception.custom.ToUserNotFoundException;
 import com.photaiary.Photaiary.user.entity.User;
 import com.photaiary.Photaiary.user.entity.UserRepository;
 import com.photaiary.Photaiary.user.security.JwtProvider;
-import com.photaiary.Photaiary.user.service.SignService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,13 +28,9 @@ public class FriendService {
 
     @Transactional
     public HttpStatus makeFriend(FriendFollowRequestDto requestDto) throws Exception { //😊
-        // 상대방&내 회원 정보 존재 확인 In DB
-        String fromUserEmail = jwtProvider.getEmail("eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxQG5hdmVyLmNvbSIsInJvbGVzIjpbeyJuYW1lIjoiUk9MRV9VU0VSIn1dLCJpYXQiOjE2NzY4ODM5NjUsImV4cCI6MTY3Njg4NTc2NX0.W-pt2_lmWL1lbxdmc2SyqdW4iwolVd90070yPrSVVGw");
+        // 상대방&내 회원 정보 존재 확인
+        String fromUserEmail = jwtProvider.getEmail(requestDto.getFromUserToken());
         Optional<User> fromUser = userRepository.findByEmail(fromUserEmail);
-
-        //내 회원 정보 여부 확인은 필요 없지 않을까?
-        boolean cantContinue = requestDto.getToUserEmail().equals(fromUserEmail);
-        if(cantContinue==false){
 
             String toUserEmail = requestDto.getToUserEmail();
             Optional<User> toUser = userRepository.findByEmail(toUserEmail);
@@ -64,7 +58,8 @@ public class FriendService {
 
                     if (isFriend) { // 이미 친구?
                         // YES
-                        return HttpStatus.BAD_REQUEST;
+                        throw new AlreadyInitializedException("이미 존재하는 친구입니다.");
+                        //return HttpStatus.BAD_REQUEST;
                     }
                 }
 
@@ -75,17 +70,20 @@ public class FriendService {
                         .build());
 
                 return HttpStatus.OK;
+
+            } else if (toUser.isEmpty()) {
+                throw  new ToUserNotFoundException("상대방이 존재 x");
             }
-            // CASE: 존재하지 않는 회원일 경우 (UserNotFoundException)
-            return HttpStatus.NOT_FOUND;
-        }
+        // CASE: 존재하지 않는 회원일 경우 (UserNotFoundException)
+            //return HttpStatus.NOT_FOUND;
         return null;
     }
 
     @Transactional
     public HttpStatus unFollow(FriendFollowRequestDto requestDto) throws Exception{// 😊
         // 상대방&내 회원 정보 존재 확인 In DB (If not exist, then impossible!)
-        String fromUserEmail = jwtProvider.getEmail("eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxQG5hdmVyLmNvbSIsInJvbGVzIjpbeyJuYW1lIjoiUk9MRV9VU0VSIn1dLCJpYXQiOjE2NzY4ODM5NjUsImV4cCI6MTY3Njg4NTc2NX0.W-pt2_lmWL1lbxdmc2SyqdW4iwolVd90070yPrSVVGw");
+
+        String fromUserEmail = jwtProvider.getEmail(requestDto.getFromUserToken());
         Optional<User> fromUser = userRepository.findByEmail(fromUserEmail);
 
         String toUserEmail = requestDto.getToUserEmail();
@@ -131,7 +129,7 @@ public class FriendService {
     public List<String> readFriends(String token){ //Long 에서 String(토큰)으로 변경(리팩토링 0219 07:26) 😊
         // Check myUserId(fromUser) exist in useDB. (If not exist, then impossible!) (second develop -> using user token)
         List<String> myFriends= new ArrayList<>();
-        String fromUserEmail = jwtProvider.getEmail("eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxQG5hdmVyLmNvbSIsInJvbGVzIjpbeyJuYW1lIjoiUk9MRV9VU0VSIn1dLCJpYXQiOjE2NzY4ODM5NjUsImV4cCI6MTY3Njg4NTc2NX0.W-pt2_lmWL1lbxdmc2SyqdW4iwolVd90070yPrSVVGw");
+        String fromUserEmail = jwtProvider.getEmail(token);
         Optional<User> fromUser = userRepository.findByEmail(fromUserEmail);
 
         List<Friend> friends = friendRepository.findAll();
@@ -149,4 +147,3 @@ public class FriendService {
         return myFriends; // the friends of the myUser (LIST TYPE)
     }
 }
-// 예외 핸들링 잊지 말고 리팩토링 하자.
