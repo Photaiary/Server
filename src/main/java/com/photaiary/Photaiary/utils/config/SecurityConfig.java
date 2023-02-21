@@ -83,11 +83,11 @@ public class SecurityConfig {
                         "/swagger-ui.html",
                         "/webjars/**" ,
                         /*Probably not needed*/ "/swagger.json").permitAll()
-                .antMatchers("/register", "/login","/h2-console/**","/duplicationCheck","/emailCheck","/refresh", "/test/docker","/update/**").permitAll()
+                .antMatchers("/register", "/login","/h2-console/**","/duplicationCheck","/emailCheck","/refresh", "/test/docker").permitAll()
                 // /admin으로 시작하는 요청은 ADMIN 권한이 있는 유저에게만 허용
                 .antMatchers("/admin/**").hasRole("ADMIN")
                 // /user 로 시작하는 요청은 USER 권한이 있는 유저에게만 허용
-                .antMatchers("/user/**", "/photo/**","/update/**").hasRole("USER")
+                .antMatchers("/user/**", "/photo/**","/update/**","/logout").hasRole("USER")
                 .anyRequest().denyAll()
                 .and()
                 // JWT 인증 필터 적용

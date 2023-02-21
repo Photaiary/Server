@@ -2,6 +2,8 @@ package com.photaiary.Photaiary.user.entity;
 
 
 import lombok.*;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -18,7 +20,9 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EntityListeners(AuditingEntityListener.class)
 @Setter
-
+//@SQLDelete(sql = "UPDATE  SET status = Status.UNACTIVE WHERE id = ?")
+@Where(clause = "deleted_at IS NULL")
+@SQLDelete(sql = "UPDATE user SET deleted_at = CURRENT_TIMESTAMP where user_index = ?")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)    // AUTO_INCREMENT
@@ -48,8 +52,10 @@ public class User {
     @CreatedDate
     @Column(updatable = false)
     private LocalDateTime createdAt;
+
     @LastModifiedDate
     private LocalDateTime updatedAt;
+
     @Column
     private LocalDateTime deletedAt;
 

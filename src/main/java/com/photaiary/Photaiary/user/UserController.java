@@ -47,11 +47,19 @@ public class UserController {
 
     }
 
+    @PostMapping("/user/withdraw")
+    public ResponseEntity<DefaultRes> withdraw(@RequestBody LoginDto request) throws Exception {
+        return new ResponseEntity<>(DefaultRes.res(signService.withdraw(request)), HttpStatus.OK);
+
+    }
+
     @ApiOperation(value = "회원 가입")
     @PostMapping(value = "/register")
     public ResponseEntity<DefaultRes> signup(@RequestBody SignRequestDto request) throws Exception {
         return new ResponseEntity<>(DefaultRes.res(signService.register(request)), HttpStatus.OK);
     }
+
+
 
     //refresh토큰으로 access토큰 재발급 요청
     @PostMapping("/refresh")
@@ -123,5 +131,12 @@ public class UserController {
         return new ResponseEntity<>(DefaultRes.res(signService.updateBirthdate(birthdate)),HttpStatus.OK);
     }
 
+    @PutMapping("/user/logout")
+    public ResponseEntity<DefaultRes> logout(@RequestBody HashMap<String, String> emailMap)throws Exception
+    {
+        String email=emailMap.get("email");
+
+        return new ResponseEntity<>(DefaultRes.res(signService.logout(email)),HttpStatus.OK);
+    }
 
 }

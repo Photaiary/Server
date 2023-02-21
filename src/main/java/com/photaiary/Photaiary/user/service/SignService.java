@@ -62,6 +62,11 @@ public class SignService {
         return signResponseDto.getToken();
     }
 
+    public boolean logout(String email){
+        String newAccessToken= jwtProvider.recreationAccessToken(email,"ROLE_USER","logout");
+        return true;
+    }
+
     public String passwordEncoding(String password){
         return passwordEncoder.encode(password);
     }
@@ -154,6 +159,20 @@ public class SignService {
         String encodedPassword=this.passwordEncoding(password);
         return user.updatePassword(encodedPassword);
     }
+
+
+    public boolean withdraw(LoginDto request) throws Exception {
+        User user = userRepository.findByEmail(request.getEmail()).orElseThrow(() -> new Exception("회원이 존재하지 않습니다"));
+
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+            throw new BadCredentialsException("잘못된 계정정보입니다.");
+        }
+
+       userRepository.delete(user);
+        return true;
+
+    }
+
 
 }
 
