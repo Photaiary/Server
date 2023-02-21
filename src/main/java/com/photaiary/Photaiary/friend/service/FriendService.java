@@ -80,7 +80,7 @@ public class FriendService {
     }
 
     @Transactional
-    public HttpStatus unFollow(FriendFollowRequestDto requestDto) throws Exception{// 😊
+    public HttpStatus unFollow(FriendFollowRequestDto requestDto) throws Exception{// 👨‍💻
         // 상대방&내 회원 정보 존재 확인 In DB (If not exist, then impossible!)
 
         String fromUserEmail = jwtProvider.getEmail(requestDto.getFromUserToken());
@@ -91,7 +91,7 @@ public class FriendService {
 
         boolean isFriend;
 
-        if (toUser.isPresent()) { // 상대가 회원인가? (차후: 로그인 개발하고 token을 통한 구현으로 refactoring)
+        if (toUser.isPresent()) {
             // 친구가 없으면 절교도 할 수 없다
             // YES
 
@@ -117,12 +117,12 @@ public class FriendService {
                 }
                 //⚠️[ISSUE: O(N) -> 정보가 많을 수록 느려진다. 어떻게 할 것 인가?]
             }
-
-            // unfollow is impossible. cuz the relationship between fromUser and toUser is not friend.
-            return HttpStatus.BAD_REQUEST;
+            throw new AlreadyInitializedException("존재하는 친구지만, 당신과 친구가 아닙니다.(삭제불가)");
+        } else if (toUser.isEmpty()) {
+            // CASE: this user is not exist (UserNotFoundException)
+            throw new ToUserNotFoundException("상대방이 존재하지 않는 회원입니다.(삭제불가)");
         }
-        // CASE: this user is not exist (UserNotFoundException)
-        return HttpStatus.NOT_FOUND;
+        return null;
     }
 
     @Transactional
