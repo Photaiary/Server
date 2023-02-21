@@ -36,12 +36,8 @@ public class FriendService {
     @Transactional
     public HttpStatus makeFriend(FriendFollowRequestDto requestDto) throws Exception { //😊
         // 상대방&내 회원 정보 존재 확인 In DB
-        String fromUserEmail = jwtProvider.getEmail("eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI0QG5hdmVyLmNvbSIsInJvbGVzIjpbeyJuYW1lIjoiUk9MRV9VU0VSIn1dLCJpYXQiOjE2NzY4ODQ0OTAsImV4cCI6MTY3Njg4NjI5MH0.zn_-OAX_LhcXlUhR57SbAMnBPd2_kbek2NGBCJCGEbE");
+        String fromUserEmail = jwtProvider.getEmail(requestDto.getFromUserToken());
         Optional<User> fromUser = userRepository.findByEmail(fromUserEmail);
-
-        //내 회원 정보 여부 확인은 필요 없지 않을까?
-        boolean cantContinue = requestDto.getToUserEmail().equals(fromUserEmail);
-        if(cantContinue==false){
 
             String toUserEmail = requestDto.getToUserEmail();
             Optional<User> toUser = userRepository.findByEmail(toUserEmail);
@@ -83,14 +79,12 @@ public class FriendService {
             }
             // CASE: 존재하지 않는 회원일 경우 (UserNotFoundException)
             return HttpStatus.NOT_FOUND;
-        }
-        return null;
     }
 
     @Transactional
     public HttpStatus unFollow(FriendFollowRequestDto requestDto) throws Exception{// 😊
         // 상대방&내 회원 정보 존재 확인 In DB (If not exist, then impossible!)
-        String fromUserEmail = jwtProvider.getEmail("eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxQG5hdmVyLmNvbSIsInJvbGVzIjpbeyJuYW1lIjoiUk9MRV9VU0VSIn1dLCJpYXQiOjE2NzY4MTAxODIsImV4cCI6MTY3NjgxMTk4Mn0.6OUA3p_E6fCTlP7bJYjTHdKNBfZLzAMgHLSNAiU90hc");
+        String fromUserEmail = jwtProvider.getEmail(requestDto.getFromUserToken());
         Optional<User> fromUser = userRepository.findByEmail(fromUserEmail);
 
         String toUserEmail = requestDto.getToUserEmail();
@@ -136,7 +130,7 @@ public class FriendService {
     public List<String> readFriends(String token){ //Long 에서 String(토큰)으로 변경(리팩토링 0219 07:26) 😊
         // Check myUserId(fromUser) exist in useDB. (If not exist, then impossible!) (second develop -> using user token)
         List<String> myFriends= new ArrayList<>();
-        String fromUserEmail = jwtProvider.getEmail("eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxQG5hdmVyLmNvbSIsInJvbGVzIjpbeyJuYW1lIjoiUk9MRV9VU0VSIn1dLCJpYXQiOjE2NzY4MTAxODIsImV4cCI6MTY3NjgxMTk4Mn0.6OUA3p_E6fCTlP7bJYjTHdKNBfZLzAMgHLSNAiU90hc");
+        String fromUserEmail = jwtProvider.getEmail(token);
         Optional<User> fromUser = userRepository.findByEmail(fromUserEmail);
 
         List<Friend> friends = friendRepository.findAll();
