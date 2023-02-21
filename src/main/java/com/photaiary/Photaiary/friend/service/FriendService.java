@@ -126,7 +126,7 @@ public class FriendService {
     }
 
     @Transactional
-    public List<String> readFriends(String token){ // 😊
+    public List<String> readFriends(String token) throws Exception{ // 😊
         // Check myUserId(fromUser) exist in useDB. (If not exist, then impossible!) (second develop -> using user token)
         List<String> myFriends= new ArrayList<>();
         String fromUserEmail = jwtProvider.getEmail(token);
@@ -144,6 +144,11 @@ public class FriendService {
                 myFriends.add(iterFriend.getToUser().getNickname());
             }
         }
+
+        if(myFriends.isEmpty()){
+            throw new AlreadyInitializedException("당신은 왕따입니다. 친구 0명");
+        }
+        
         return myFriends; // the friends of the myUser (LIST TYPE)
     }
 }
