@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -82,7 +83,7 @@ public class UserController {
         return new ResponseEntity<>(DefaultRes.res(authCode),HttpStatus.OK);
     }
 
-    @PostMapping("/update/theme")
+    @PutMapping("/update/theme")
     public ResponseEntity<DefaultRes> updateTheme(@RequestBody HashMap<String, String> themeMap)throws Exception
     {
         String theme=themeMap.get("theme");
@@ -90,7 +91,7 @@ public class UserController {
         return new ResponseEntity<>(DefaultRes.res(signService.updateTheme(theme)),HttpStatus.OK);
     }
 
-    @PostMapping("/update/nickname")
+    @PutMapping("/update/nickname")
     public ResponseEntity<DefaultRes> updateNickname(@RequestBody HashMap<String, String> nicknameMap)throws Exception
     {
         String nickname=nicknameMap.get("nickname");
@@ -98,14 +99,14 @@ public class UserController {
         return new ResponseEntity<>(DefaultRes.res(signService.updateNickname(nickname)),HttpStatus.OK);
     }
 
-    @PostMapping("/update/name")
+    @PutMapping("/update/name")
     public ResponseEntity<DefaultRes> updateName(@RequestBody HashMap<String, String> nameMap)throws Exception
     {
         String name=nameMap.get("name");
 
         return new ResponseEntity<>(DefaultRes.res(signService.updateName(name)),HttpStatus.OK);
     }
-    @PostMapping("/update/password")
+    @PutMapping("/update/password")
     public ResponseEntity<DefaultRes> updatePassword(@RequestBody HashMap<String, String> passwordMap)throws Exception
     {
         String password=passwordMap.get("password");
@@ -114,12 +115,13 @@ public class UserController {
     }
 
 
-    @PostMapping("/update/birthdate")
+    @PutMapping("/update/birthdate")
     public ResponseEntity<DefaultRes> updateBirthdate(@RequestBody HashMap<String, String> birthdateMap)throws Exception
     {
         String birthdate=birthdateMap.get("birthdate");
 
         return new ResponseEntity<>(DefaultRes.res(signService.updateBirthdate(birthdate)),HttpStatus.OK);
     }
+
 
 }
