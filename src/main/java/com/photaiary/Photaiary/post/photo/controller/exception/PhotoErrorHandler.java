@@ -1,13 +1,9 @@
 package com.photaiary.Photaiary.post.photo.controller.exception;
 
 import com.photaiary.Photaiary.global.exception.ExceptionResponse;
-import com.photaiary.Photaiary.post.photo.controller.exception.custom.FileConvertException;
-import com.photaiary.Photaiary.post.photo.controller.exception.custom.NoLocationException;
-import com.photaiary.Photaiary.post.photo.controller.exception.custom.NoUserException;
-import com.photaiary.Photaiary.post.photo.controller.exception.custom.VoException;
+import com.photaiary.Photaiary.post.photo.controller.exception.custom.*;
 import lombok.NoArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 
 import java.util.Date;
@@ -22,7 +18,7 @@ public class PhotoErrorHandler {
         this.webRequest = webRequest;
     }
 
-    public ExceptionResponse handleError() {
+    public PhotoExceptionResponse handleError() {
         if (exception instanceof NoUserException) {
             return handleNoUserError();
         } else if (exception instanceof VoException) {
@@ -35,23 +31,23 @@ public class PhotoErrorHandler {
         return null;
     }
 
-    private ExceptionResponse handleNoUserError() {
+    private PhotoExceptionResponse handleNoUserError() {
         System.out.println(1);
-        return new ExceptionResponse(new Date(), HttpStatus.INTERNAL_SERVER_ERROR.value(), exception.getMessage(), webRequest.getDescription(false));
+        return new PhotoExceptionResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(),1L, exception.getMessage(), false);
     }
 
-    private ExceptionResponse handleVoError() {
+    private PhotoExceptionResponse handleVoError() {
         System.out.println(2);
-        return new ExceptionResponse(new Date(), HttpStatus.INTERNAL_SERVER_ERROR.value(), exception.getMessage(), webRequest.getDescription(false));
+        return new PhotoExceptionResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(),2L, exception.getMessage(), false);
     }
 
-    private ExceptionResponse handleNoLocationError() {
+    private PhotoExceptionResponse handleNoLocationError() {
         System.out.println(3);
-        return new ExceptionResponse(new Date(), HttpStatus.INTERNAL_SERVER_ERROR.value(), exception.getMessage(), webRequest.getDescription(false));
+        return new PhotoExceptionResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(),3L, exception.getMessage(), false);
     }
 
-    private ExceptionResponse handleFileConvertError() {
+    private PhotoExceptionResponse handleFileConvertError() {
         System.out.println(4);
-        return new ExceptionResponse(new Date(), HttpStatus.INTERNAL_SERVER_ERROR.value(), exception.getMessage(), webRequest.getDescription(false));
+        return new PhotoExceptionResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(),4L, exception.getMessage(), false);
     }
 }
