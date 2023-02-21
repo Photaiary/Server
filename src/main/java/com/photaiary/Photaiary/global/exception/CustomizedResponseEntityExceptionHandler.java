@@ -21,12 +21,15 @@ import java.util.Date;
 public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
 
 
+
+    //미완성: FE랑 res형태 조율 후 개발 예정
     @ExceptionHandler(AlreadyInitializedException.class)
     public ResponseEntity<Object> handleAlreadyInitException(Exception ex, WebRequest request){
         FriendErrorHandler friendErrorHandler = new FriendErrorHandler(ex, request);
         ExceptionResponse exceptionResponse = friendErrorHandler.handleError();
         return new ResponseEntity(exceptionResponse, HttpStatus.BAD_REQUEST);
     }
+    //미완성: FE랑 res형태 조율 후 개발 예정
     @ExceptionHandler(CustomException.class)
     public ResponseEntity<Object> handleFriendExceptions(Exception ex, WebRequest request){
         FriendErrorHandler friendErrorHandler = new FriendErrorHandler(ex,request);
