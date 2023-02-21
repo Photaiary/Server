@@ -11,7 +11,7 @@ import org.springframework.web.context.request.WebRequest;
 import java.util.Date;
 
 @NoArgsConstructor
-public class FriendErrorHandler {
+public class FriendErrorHandler {//👨‍💻
 
     private Exception exception;
     private WebRequest request;
