@@ -148,7 +148,7 @@ public class FriendService {
         if(myFriends.isEmpty()){
             throw new AlreadyInitializedException("당신은 왕따입니다. 친구 0명");
         }
-        
+
         return myFriends; // the friends of the myUser (LIST TYPE)
     }
 }
