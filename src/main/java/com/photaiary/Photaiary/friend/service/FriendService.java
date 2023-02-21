@@ -27,7 +27,7 @@ public class FriendService {
     private final JwtProvider jwtProvider;
 
     @Transactional
-    public HttpStatus makeFriend(FriendFollowRequestDto requestDto) throws Exception { //😊
+    public HttpStatus makeFriend(FriendFollowRequestDto requestDto) throws Exception { //👨‍💻
         // 상대방&내 회원 정보 존재 확인
         String fromUserEmail = jwtProvider.getEmail(requestDto.getFromUserToken());
         Optional<User> fromUser = userRepository.findByEmail(fromUserEmail);
@@ -126,7 +126,7 @@ public class FriendService {
     }
 
     @Transactional
-    public List<String> readFriends(String token){ //Long 에서 String(토큰)으로 변경(리팩토링 0219 07:26) 😊
+    public List<String> readFriends(String token){ // 😊
         // Check myUserId(fromUser) exist in useDB. (If not exist, then impossible!) (second develop -> using user token)
         List<String> myFriends= new ArrayList<>();
         String fromUserEmail = jwtProvider.getEmail(token);
