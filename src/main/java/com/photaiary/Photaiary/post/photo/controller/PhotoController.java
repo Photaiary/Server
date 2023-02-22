@@ -1,13 +1,14 @@
 package com.photaiary.Photaiary.post.photo.controller;
 
-import com.photaiary.Photaiary.post.photo.dto.SinglePhotoDto;
-import com.photaiary.Photaiary.post.photo.dto.EditRequest;
-import com.photaiary.Photaiary.post.photo.dto.PhotoRequest;
-import com.photaiary.Photaiary.post.photo.dto.PhotoS3Dto;
+import com.photaiary.Photaiary.post.photo.controller.exception.custom.VoException;
+import com.photaiary.Photaiary.post.photo.dto.*;
 import com.photaiary.Photaiary.post.photo.service.PhotoService;
+import com.photaiary.Photaiary.post.photo.vo.BucketVo;
 import com.photaiary.Photaiary.post.photo.vo.PhotoVo;
 import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -19,29 +20,36 @@ public class PhotoController {
     private final PhotoService photoService;
 
     @PutMapping("/edit")
-    public Long update(@RequestBody EditRequest editRequest) {
-        return photoService.photoEdit(editRequest);
+    public ResponseEntity<PhotoSimpleResponse> update(@RequestBody EditRequest editRequest) throws VoException {
+        return new ResponseEntity(PhotoSimpleResponse
+                .builder()
+                .isSuccuess(photoService.photoEdit(editRequest))
+                .build(), HttpStatus.OK);
     }
 
     @PostMapping("/upload")
-    public Long upload(@RequestParam("img") MultipartFile img, @RequestPart PhotoRequest photoRequest) throws Exception {
+    public ResponseEntity<PhotoResponse> upload(@RequestParam("img") MultipartFile img, @RequestPart PhotoRequest photoRequest) throws Exception {
         PhotoVo photoVo = new PhotoVo(img);
-        PhotoS3Dto photoS3Dto = new PhotoS3Dto();
-        return photoService.photoInfoSave(photoRequest, photoVo, photoS3Dto);
+        BucketVo bucketVo = new BucketVo(photoService.s3Upload(img));
+        PhotoResponse photoResponse = PhotoResponse.builder()
+                .photoIndex(photoService.photoInfoSave(photoRequest, photoVo, bucketVo))
+                .longitude(photoVo.getLongitude())
+                .latitude(photoVo.getLatitude())
+                .build();
+        return new ResponseEntity(photoResponse, HttpStatus.OK);
     }
 
     @DeleteMapping("/")
-    public Boolean delete(@RequestBody SinglePhotoDto singlePhotoDto) {
-        return photoService.photoDelete(singlePhotoDto);
+    public ResponseEntity<PhotoSimpleResponse> delete(@RequestBody SinglePhotoDto singlePhotoDto) throws VoException {
+        return new ResponseEntity(PhotoSimpleResponse
+                .builder()
+                .isSuccuess(photoService.photoDelete(singlePhotoDto))
+                .build(), HttpStatus.OK);
     }
 
     @GetMapping("/")
-    public String viewOnePhoto(@RequestBody SinglePhotoDto singlePhotoDto) {
-        return photoService.viewSinglePhoto(singlePhotoDto);
-    }
-    @GetMapping("/upload")
-    public String yes() {
-        return "yes";
+    public ResponseEntity<SinglePhotoResponse> viewOnePhoto(@RequestBody SinglePhotoDto singlePhotoDto) throws VoException{
+        return new ResponseEntity(photoService.viewSinglePhoto(singlePhotoDto), HttpStatus.OK);
     }
 }
 

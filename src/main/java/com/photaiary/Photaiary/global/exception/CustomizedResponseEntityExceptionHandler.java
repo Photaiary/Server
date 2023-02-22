@@ -1,6 +1,7 @@
 package com.photaiary.Photaiary.global.exception;
 
 import com.photaiary.Photaiary.post.photo.controller.exception.PhotoErrorHandler;
+import com.photaiary.Photaiary.post.photo.controller.exception.custom.PhotoExceptionResponse;
 import com.photaiary.Photaiary.post.photo.controller.exception.custom.VoException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -29,17 +30,17 @@ public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExce
     @ExceptionHandler(VoException.class)
     public final ResponseEntity<Object> handlePhotoExceptions(Exception ex, WebRequest request) {
         PhotoErrorHandler photoErrorHandler = new PhotoErrorHandler(ex, request);
-        ExceptionResponse exceptionResponse = photoErrorHandler.handleError();
+        PhotoExceptionResponse exceptionResponse = photoErrorHandler.handleError();
         return new ResponseEntity(exceptionResponse, HttpStatus.INTERNAL_SERVER_ERROR); // 500 error
     }
-    @ExceptionHandler(Exception.class)
-    public final ResponseEntity<Object> handleAllExceptions(Exception ex, WebRequest request){
-        ExceptionResponse exceptionResponse =
-                new ExceptionResponse(false, new Date(), HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                        ex.getMessage(), request.getDescription(false));
-
-        return new ResponseEntity(exceptionResponse, HttpStatus.INTERNAL_SERVER_ERROR); // 500 error
-    }
+    //    @ExceptionHandler(Exception.class)
+//    public final ResponseEntity<Object> handleAllExceptions(Exception ex, WebRequest request){
+//        ExceptionResponse exceptionResponse =
+//                new ExceptionResponse(new Date(), HttpStatus.INTERNAL_SERVER_ERROR.value(),
+//                        ex.getMessage(), request.getDescription(false));
+//
+//        return new ResponseEntity(exceptionResponse, HttpStatus.INTERNAL_SERVER_ERROR); // 500 error
+//    }
     @Override  // 부모가 가진 method를 재정의
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
                                                                   HttpHeaders headers,
