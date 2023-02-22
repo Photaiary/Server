@@ -7,6 +7,7 @@ import com.photaiary.Photaiary.post.photo.controller.exception.custom.VoExceptio
 import com.photaiary.Photaiary.post.photo.dto.SinglePhotoDto;
 import com.photaiary.Photaiary.post.photo.dto.EditRequest;
 import com.photaiary.Photaiary.post.photo.dto.PhotoRequest;
+import com.photaiary.Photaiary.post.photo.dto.SinglePhotoResponse;
 import com.photaiary.Photaiary.post.photo.entity.DeleteStatus;
 import com.photaiary.Photaiary.post.photo.entity.Photo;
 import com.photaiary.Photaiary.post.photo.repository.PhotoRepository;
@@ -67,50 +68,59 @@ public class PhotoService {
     }
 
     @Transactional
-    public Long photoEdit(EditRequest editRequest) {
+    public Boolean photoEdit(EditRequest editRequest) throws VoException {
         Optional<Photo> photo = photoRepository.findById(editRequest.getPhotoIndex());
         try {
             if (photo.isPresent()) {
                 photo.get().editTag(editRequest.getTag());
                 photo.get().editComment(editRequest.getComment());
                 photoRepository.save(photo.get());
-                return photo.get().getId();
-            } else if (photo.isEmpty()) {
-                return -1000L;
-            } else {
-                return -900L;
+                return photo.isPresent();
             }
+            return false;
         } catch (Exception e) {
-            System.out.println(e);
-            return -800L;
+            throw new VoException("사진 파일이 존재하지 않습니다.");
         }
     }
 
     @Transactional
-    public String getImage(Long uuid) {
+    public String getImage(Long uuid) throws VoException{
         Optional<Photo> photo = photoRepository.findById(uuid);
-        if (photo.isPresent()) {
-            return photo.get().getImage();
-        } else if (!photo.isPresent()) {
-            return "noPhoto";
+        try{
+            if (photo.isPresent()) {
+                return photo.get().getImage();
+            } else if (!photo.isPresent()) {
+                throw new VoException("사진파일이 존재하지 않습니다.1");
+            }
+            return "error";
         }
-        return "error";
+        catch (Exception e){
+            throw new VoException("사진파일이 존재하지 않습니다.2");
+        }
     }
 
     @Transactional
-    public Boolean photoDelete(SinglePhotoDto singlePhotoDto)  {
-//        photoRepository.deleteById(deleteRequest.getPhotoId());
-//        return true;
-        return photoRepository.deleteByRequestId(singlePhotoDto.getPhotoId());
+    public Boolean photoDelete(SinglePhotoDto singlePhotoDto) throws VoException  {
+        try {
+            return photoRepository.deleteByRequestId(singlePhotoDto.getPhotoId());
+        } catch (Exception e) {
+            throw new VoException("파일이 존재하지 않습니다");
+        }
     }
 
     @Transactional
-    public String viewSinglePhoto(SinglePhotoDto singlePhotoDto) {
-//        return photoRepository.findById(singlePhotoDto.getPhotoId());
-        Optional<Photo> photo = photoRepository.findById(singlePhotoDto.getPhotoId());
-        if(photo.isPresent())
-            return photo.get().getImage();
-        return "No Photo";
+    public Optional<SinglePhotoResponse> viewSinglePhoto(SinglePhotoDto singlePhotoDto) throws VoException {
+        try {
+            Optional<Photo> photo = photoRepository.findById(singlePhotoDto.getPhotoId());
+            SinglePhotoResponse singlePhotoResponse = SinglePhotoResponse.builder()
+                    .imgLink(photo.get().getImage())
+                    .latitude(photo.get().getLatitude())
+                    .longitude(photo.get().getLongitude())
+                    .build();
+            return Optional.ofNullable(singlePhotoResponse);
+        } catch (Exception e) {
+            throw new VoException("사진이 존재하지 않습니다.");
+        }
     }
 //    @Transactional
 //    public List<String> getImageByDaily(Long userId, String dailyValue) {
