@@ -37,15 +37,9 @@ public class GetDailyRes {  // 하루하루의 정보
                 .build();
     }
 
-    public static GetDailyRes ofFalseDiary(String getDate, Daily getDaily, Diary getDiary, List<GetPhotoRes> photoListRes){
-        return GetDailyRes.builder()
-                .dailyIndex(getDaily.getDailyIndex())
-                .date(getDate)
-                .diaryTitle(null)
-                .diaryContent(null)
-                .isPublic(getDiary.isPublic()) // 추가 필요함
-                .photoList(photoListRes)
-                .build();
+    public void changeFrinedDiaryInfo(){
+        this.diaryTitle = null;
+        this.diaryContent = null;
     }
 
 }
