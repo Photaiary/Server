@@ -4,6 +4,7 @@ import com.photaiary.Photaiary.post.daily.entity.Daily;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 
@@ -21,8 +22,8 @@ public class Diary {
     private String diaryTitle;
     @Column
     private String diaryContent;
-    @Column
-    private boolean isPublic; //디폴트 true
+    @Column(columnDefinition = "boolean default false")
+    private boolean isPublic; //디폴트 false
 
     @Builder
     public Diary(Long diaryIndex, Daily daily, String diaryTitle, String diaryContent) {
