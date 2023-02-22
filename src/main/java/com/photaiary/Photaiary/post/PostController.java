@@ -3,6 +3,7 @@ package com.photaiary.Photaiary.post;
 import com.photaiary.Photaiary.post.diary.Diary;
 import com.photaiary.Photaiary.post.diary.DiaryPostRequestDto;
 import com.photaiary.Photaiary.post.diary.DiaryService;
+import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +15,7 @@ import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
+@Api(tags ="2. 게시글 관련 API")
 public class PostController {
 
     private final DiaryService diaryService;

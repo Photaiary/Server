@@ -19,7 +19,7 @@ import java.util.Date;
 @ControllerAdvice // 모든 Controller 가 실행될 때 반드시 실행됨
 public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
 
-    //    @ExceptionHandler(Exception.class)
+//    @ExceptionHandler(Exception.class)
 //    public final ResponseEntity<Object> handleAllExceptions(Exception ex, WebRequest request){
 //        ExceptionResponse exceptionResponse =
 //                new ExceptionResponse(new Date(), HttpStatus.INTERNAL_SERVER_ERROR.value(),
@@ -46,11 +46,11 @@ public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExce
                                                                   HttpHeaders headers,
                                                                   HttpStatus status,
                                                                   WebRequest request) {
-        ExceptionResponse photoExceptionResponse =
-                new ExceptionResponse(new Date(), HttpStatus.BAD_REQUEST.value(),
+        ExceptionResponse exceptionResponse =
+                new ExceptionResponse(false,new Date(), HttpStatus.BAD_REQUEST.value(),
                         "Validation Failed", ex.getBindingResult().toString());
 
-        return new ResponseEntity(photoExceptionResponse, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity(exceptionResponse, HttpStatus.BAD_REQUEST);
     }
 
 }

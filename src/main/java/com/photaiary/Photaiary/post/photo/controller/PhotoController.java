@@ -5,6 +5,7 @@ import com.photaiary.Photaiary.post.photo.dto.*;
 import com.photaiary.Photaiary.post.photo.service.PhotoService;
 import com.photaiary.Photaiary.post.photo.vo.BucketVo;
 import com.photaiary.Photaiary.post.photo.vo.PhotoVo;
+import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/photo")
+@Api(tags ="3. 사진 관련 API")
 public class PhotoController {
     private final PhotoService photoService;
 

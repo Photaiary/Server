@@ -3,18 +3,26 @@ package com.photaiary.Photaiary.utils.s3;
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.SdkClientException;
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.CannedAccessControlList;
-import com.amazonaws.services.s3.model.DeleteObjectRequest;
-import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.amazonaws.services.s3.model.*;
+import com.amazonaws.util.IOUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
+
+import org.springframework.http.HttpHeaders;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.URLEncoder;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -97,6 +105,7 @@ public class S3UploadComponent {
         try{
             // s3 에서 삭제
             amazonS3.deleteObject(new DeleteObjectRequest(bucket, filePath));
+
         }catch (AmazonServiceException e){
             e.printStackTrace();
         }catch (SdkClientException e){
@@ -105,7 +114,18 @@ public class S3UploadComponent {
         return "삭제 성공";
     }
 
-   public byte[] downloadFile(String filePath) {
-        return null;
+   public ResponseEntity<byte[]> downloadFile(String key) throws IOException {
+       GetObjectRequest getObjectRequest = new GetObjectRequest(bucket, key);
+       S3Object s3Object = amazonS3.getObject(getObjectRequest);
+       S3ObjectInputStream objectInputStream = s3Object.getObjectContent();
+       byte[] bytes = IOUtils.toByteArray(objectInputStream);
+       String fileName = URLEncoder.encode(key, "UTF-8").replaceAll("\\+", "%20");
+
+       HttpHeaders httpHeaders = new HttpHeaders();
+       httpHeaders.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+       httpHeaders.setContentLength(bytes.length);
+       httpHeaders.setContentDispositionFormData("attachment", fileName);
+
+       return new ResponseEntity<>(bytes, httpHeaders, HttpStatus.OK);
     }
 }
