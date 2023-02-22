@@ -3,18 +3,19 @@ package com.photaiary.Photaiary.post.photo.vo;
 import com.photaiary.Photaiary.utils.s3.S3UploadComponent;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 @NoArgsConstructor
 @Getter
-@ComponentScan
 public class BucketVo {
-    private S3UploadComponent s3UploadComponent;
+
     private String imageLink;
 
-    public BucketVo(MultipartFile multipartFile) throws IOException {
-        this.imageLink = s3UploadComponent.uploadOneFile(multipartFile, "/");
+    public BucketVo(String imageLink) {
+        this.imageLink = imageLink.replace("%2F%2F%2F","//");
     }
 }
