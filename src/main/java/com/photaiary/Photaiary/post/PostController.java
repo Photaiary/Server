@@ -52,9 +52,28 @@ public class PostController {
     }
 
     @PostMapping("/diary/lock/{dailyIndex}")
-    public boolean isPublic(@PathVariable Long dailyIndex) throws Exception{
-        boolean isPublic = diaryService.isPublic(dailyIndex);
+    public ResponseEntity<Map<Integer, Object>> updateLockState(@PathVariable Long dailyIndex) throws Exception{
+        Map<Integer, Object> response = new HashMap<>();
+        Map<String, Object> data = new HashMap<>();
 
-        return isPublic;
+        Diary diary = diaryService.updateLockState(dailyIndex);
+
+        data.put("lock",diary.isPublic());
+        data.put("isSuccess", "true");
+        response.put(HttpStatus.OK.value(),data);
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 }
+
+/**
+ * 성공 :
+ * 200:{
+ *    "isSuccess":true,
+ *    "lock": "false"
+ * }
+ * 실패:
+ * 400:{
+ *    "isSuccess":"false"
+ * }
+ */
