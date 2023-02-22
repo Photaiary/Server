@@ -11,7 +11,7 @@ public class DiaryUpdateRequestDto {
     private String diaryContent;
 
     @Builder
-    public DiaryUpdateRequestDto(String diaryTitle, String diaryContent) {
+    public DiaryUpdateRequestDto(String diaryTitle, String diaryContent, String isPublic) {
         this.diaryTitle = diaryTitle;
         this.diaryContent = diaryContent;
     }

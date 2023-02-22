@@ -21,6 +21,8 @@ public class Diary {
     private String diaryTitle;
     @Column
     private String diaryContent;
+    @Column
+    private boolean isPublic; //디폴트 true
 
     @Builder
     public Diary(Long diaryIndex, Daily daily, String diaryTitle, String diaryContent) {
@@ -33,6 +35,11 @@ public class Diary {
     public void update(String diaryTitle, String diaryContent) {
         this.diaryTitle = diaryTitle;
         this.diaryContent = diaryContent;
+    }
+
+    public boolean updateLockState(boolean isPublic){
+        this.isPublic = isPublic; // 역접 시킴
+        return this.isPublic;
     }
 }
 

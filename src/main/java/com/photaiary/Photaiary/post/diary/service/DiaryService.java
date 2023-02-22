@@ -5,6 +5,7 @@ import com.photaiary.Photaiary.post.daily.repository.DailyReposiotry;
 import com.photaiary.Photaiary.post.diary.Diary;
 import com.photaiary.Photaiary.post.diary.DiaryRepository;
 import com.photaiary.Photaiary.post.diary.dto.DiaryPostRequestDto;
+import com.photaiary.Photaiary.post.diary.dto.DiarySecretDto;
 import com.photaiary.Photaiary.post.diary.dto.DiaryUpdateRequestDto;
 import com.photaiary.Photaiary.post.diary.exception.custom.NoUserException;
 import com.photaiary.Photaiary.user.entity.User;
@@ -63,5 +64,22 @@ public class DiaryService {
         diary.update(requestDto.getDiaryTitle(), requestDto.getDiaryContent());
 
         return id;
+    }
+
+    public boolean isPublic(Long dailyIndex) throws Exception{
+        //인증
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Optional<User> user = userRepository.findByEmail(auth.getName());
+
+        if(!user.isPresent()){
+            throw new NoUserException("유효하지 않은 사용자 입니다.");
+        }
+
+        //공개범위 설정할 게시물 ID 찾기
+        Diary diary = diaryRepository.findById(dailyIndex).orElseThrow(() -> new IllegalArgumentException("해당 게시글이 없습니다. id="+dailyIndex));
+        // 범위 설정(토글)
+        boolean currentLockState = diary.isPublic();
+
+        return diary.updateLockState(!currentLockState);
     }
 }

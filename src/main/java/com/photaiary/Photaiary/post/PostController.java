@@ -2,6 +2,7 @@ package com.photaiary.Photaiary.post;
 
 import com.photaiary.Photaiary.post.diary.Diary;
 import com.photaiary.Photaiary.post.diary.dto.DiaryPostRequestDto;
+import com.photaiary.Photaiary.post.diary.dto.DiarySecretDto;
 import com.photaiary.Photaiary.post.diary.dto.DiaryUpdateRequestDto;
 import com.photaiary.Photaiary.post.diary.service.DiaryService;
 import io.swagger.annotations.Api;
@@ -48,5 +49,12 @@ public class PostController {
         response.put(status, data);
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @PostMapping("/diary/lock/{dailyIndex}")
+    public boolean isPublic(@PathVariable Long dailyIndex) throws Exception{
+        boolean isPublic = diaryService.isPublic(dailyIndex);
+
+        return isPublic;
     }
 }
