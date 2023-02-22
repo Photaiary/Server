@@ -66,11 +66,12 @@ public class DiaryService {
         return id;
     }
 
-    public boolean isPublic(Long dailyIndex) throws Exception{
+    public Diary updateLockState(Long dailyIndex) throws Exception{
         //인증
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         Optional<User> user = userRepository.findByEmail(auth.getName());
 
+        //토큰 인증 실패 예외
         if(!user.isPresent()){
             throw new NoUserException("유효하지 않은 사용자 입니다.");
         }
@@ -78,8 +79,9 @@ public class DiaryService {
         //공개범위 설정할 게시물 ID 찾기
         Diary diary = diaryRepository.findById(dailyIndex).orElseThrow(() -> new IllegalArgumentException("해당 게시글이 없습니다. id="+dailyIndex));
         // 범위 설정(토글)
-        boolean currentLockState = diary.isPublic();
+        diary.updateLockState(!diary.isPublic());
+        Diary updatedDiary = diaryRepository.save(diary);
 
-        return diary.updateLockState(!currentLockState);
+        return updatedDiary;
     }
 }
