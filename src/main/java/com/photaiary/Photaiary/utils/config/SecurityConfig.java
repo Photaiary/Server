@@ -36,7 +36,7 @@ public class SecurityConfig {
 
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
-        return (web) -> web.ignoring().antMatchers("/swagger-ui/**", "/v3/api-docs/**", "/proxy/**");
+        return (web) -> web.ignoring().antMatchers("/swagger-ui/**", "/v3/api-docs/**", "/proxy/**","/register","/login");
     }
 
     @Bean
@@ -84,6 +84,7 @@ public class SecurityConfig {
                 .antMatchers("/admin/**").hasRole("ADMIN")
                 // /user 로 시작하는 요청은 USER 권한이 있는 유저에게만 허용
                 .antMatchers("/user/**", "/photo/**").hasRole("USER")
+                .antMatchers("/user/**", "/daily/**").hasRole("USER")
                 .anyRequest().denyAll()
                 .and()
                 // JWT 인증 필터 적용
