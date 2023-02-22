@@ -18,7 +18,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.text.ParseException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -37,33 +36,29 @@ public class HomeService {
 
     @Transactional
     public GetHomeRes getHome(String date) throws NoUserException {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        Optional<User> user = userRepository.findByEmail(auth.getName());
-
-        if (!user.isPresent()) {
-            throw new NoUserException("유효하지 않은 사용자 입니다.");
-        }
-
+        Optional<User> user = checkUserAuth();
         List<GetDailyRes> getDailyResList = getDailyResList(user.get(), date);
         return GetHomeRes.of(user.get(), getDailyResList);
     }
 
     @Transactional
     public GetHomeRes getFriendHome(String userNickname, String date) throws NoUserException {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        Optional<User> user = userRepository.findByEmail(auth.getName());
-
-        if (!user.isPresent()) {
-            throw new NoUserException("유효하지 않은 사용자 입니다.");
-        }
-
+        Optional<User> user = checkUserAuth();
         Optional<User> friend = userRepository.findByNickname(userNickname);
         if(friend.isEmpty()){
             throw new NoUserException("존재하지 않은 사용자 입니다.");
         }
-
         List<GetDailyRes> getDailyResList = getFriendDailyResList(friend.get(), date);
         return GetHomeRes.of(friend.get(), getDailyResList);
+    }
+
+    private Optional<User> checkUserAuth() throws NoUserException {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Optional<User> user = userRepository.findByEmail(auth.getName());
+        if (!user.isPresent()) {
+            throw new NoUserException("유효하지 않은 사용자 입니다.");
+        }
+        return user;
     }
 
     private List<GetDailyRes> getDailyResList(User user, String date) {
@@ -117,10 +112,7 @@ public class HomeService {
     private Daily checkDaily(Optional<Daily> daily, User user, String getDate) {
         Daily getDaily;
         if(daily.isEmpty()){
-            Daily createDaily = Daily.builder()
-                    .user(user)
-                    .dailyValue(getDate)
-                    .build();
+            Daily createDaily = Daily.toEntity(user, getDate);
             Daily saveDaily = dailyReposiotry.save(createDaily);
             getDaily = saveDaily;
         }else{
@@ -132,9 +124,7 @@ public class HomeService {
     private Diary checkDiary(Optional<Diary> diary, Daily getDaily) {
         Diary getDiary;
         if(diary.isEmpty()){
-            Diary createDiary = Diary.builder()
-                    .daily(getDaily)
-                    .build();
+            Diary createDiary = Diary.toEntity(getDaily);
             Diary saveDiary = diaryRepository.save(createDiary);
             getDiary = saveDiary;
         }else{

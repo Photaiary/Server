@@ -42,5 +42,12 @@ public class Diary {
         this.isPublic = isPublic; // 역접 시킴
         return this.isPublic;
     }
+
+    public static Diary toEntity(Daily getDaily) {
+        return Diary.builder()
+                .daily(getDaily)
+                .build();
+    }
+
 }
 
