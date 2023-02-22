@@ -1,10 +1,9 @@
 package com.photaiary.Photaiary.user.entity;
 
 
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -20,7 +19,10 @@ import java.util.List;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EntityListeners(AuditingEntityListener.class)
-
+@Setter
+//@SQLDelete(sql = "UPDATE  SET status = Status.UNACTIVE WHERE id = ?")
+@Where(clause = "deleted_at IS NULL")
+@SQLDelete(sql = "UPDATE user SET deleted_at = CURRENT_TIMESTAMP where user_index = ?")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)    // AUTO_INCREMENT
@@ -50,8 +52,10 @@ public class User {
     @CreatedDate
     @Column(updatable = false)
     private LocalDateTime createdAt;
+
     @LastModifiedDate
     private LocalDateTime updatedAt;
+
     @Column
     private LocalDateTime deletedAt;
 
@@ -59,9 +63,14 @@ public class User {
     @Column(columnDefinition = "varchar(9) default 'ACTIVE'")
     private Status status;
 
+    @Enumerated(EnumType.STRING)
+    @Column(columnDefinition = "varchar(9) default 'blue'")
+    private Theme theme;
+
 
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<Authority> roles = new ArrayList<>();
+
 
     public void setRoles(List<Authority> role) {
         this.roles = role;
@@ -70,15 +79,61 @@ public class User {
 
 
     @Builder
-    public User(String email, String password, String nickname, String name, String birthdate,
-                String profileImage){
+    public User(String email, String password, String nickname, String name, String birthdate){
 
         this.email=email;
         this.password=password;
         this.nickname=nickname;
         this.name=name;
         this.birthdate=birthdate;
-        this.profileImage=profileImage;
+        this.profileImage="";
+        this.theme=Theme.blue;
+        this.status=Status.ACTIVE;
+
     }
+
+    //update 매서드들
+    public String[] updateTheme(String theme)throws Exception{
+
+
+        if(theme.equals("blue")) {
+            this.theme = Theme.blue;
+            return new String[]{"One", "Two", "Three", "Four"};
+        }
+        else if(theme.equals("brown")) {
+            this.theme = Theme.brown;
+            return new String[]{"One", "Two", "Three", "Four"};
+        }
+        else if(theme.equals("green")) {
+            this.theme = Theme.green;
+            return new String[]{"One", "Two", "Three", "Four"};
+        }
+        else {
+            throw new Exception("해당 theme 없음");
+
+        }
+
+    }
+
+    public String updateNickname(String nickname){
+        this.nickname=nickname;
+        return "변경 됨";
+    }
+
+    public boolean updateBirthdate(String birthdate){
+        this.birthdate=birthdate;
+        return true;
+    }
+
+    public boolean updateName(String name){
+        this.name=name;
+        return true;
+    }
+
+    public boolean updatePassword(String encodedPassword){
+        this.password=(encodedPassword);
+        return true;
+    }
+
 
 }

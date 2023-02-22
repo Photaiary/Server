@@ -34,7 +34,6 @@ public class UserSaveRequestDto {
                 .name(name)
                 .nickname(nickname)
                 .birthdate(birthdate)
-                .profileImage(profileImage)
                 .build();
     }
 }
