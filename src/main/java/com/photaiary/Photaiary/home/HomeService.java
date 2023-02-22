@@ -36,7 +36,7 @@ public class HomeService {
     private final UserRepository userRepository;
 
     @Transactional
-    public GetHomeRes getHome(String date) throws ParseException, NoUserException {
+    public GetHomeRes getHome(String date) throws NoUserException {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         Optional<User> user = userRepository.findByEmail(auth.getName());
 
@@ -49,7 +49,7 @@ public class HomeService {
     }
 
     @Transactional
-    public GetHomeRes getFriendHome(String userNickname, String date) throws NoUserException {
+    public GetHomeRes getFriendHome(String userEmail, String date) throws NoUserException {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         Optional<User> user = userRepository.findByEmail(auth.getName());
 
@@ -57,13 +57,12 @@ public class HomeService {
             throw new NoUserException("유효하지 않은 사용자 입니다.");
         }
 
-        Optional<User> friend = userRepository.findByNickname(userNickname);
+        Optional<User> friend = userRepository.findByEmail(userEmail);
         if(friend.isEmpty()){
             throw new NoUserException("존재하지 않은 사용자 입니다.");
         }
 
         List<GetDailyRes> getDailyResList = getFriendDailyResList(friend.get(), date);
-
         return GetHomeRes.of(friend.get(), getDailyResList);
     }
 
@@ -81,15 +80,18 @@ public class HomeService {
             Optional<Diary> diary = diaryRepository.findByDaily(getDaily);
             Diary getDiary = checkDiary(diary, getDaily);
 
-            // if -> Diary isPublic = flase -> photo xx
-
             // photoList  - 할일 1) 태그 처리 하기
             List<Photo> photoList = photoRepository.findAllByDaily(getDaily);
             List<GetPhotoRes> photoListRes = checkPhotoList(photoList);
 
-            // 할일 2) post isPublic
-            GetDailyRes getDailyRes = GetDailyRes.of(getDate, getDaily, getDiary, photoListRes);
+            GetDailyRes getDailyRes;
+            if(!getDiary.isPublic()){
+                getDailyRes = GetDailyRes.ofFalseDiary(getDate, getDaily, getDiary, photoListRes);
+            }else{
+                getDailyRes = GetDailyRes.of(getDate, getDaily, getDiary, photoListRes);
+            }
             getDailyResList.add(getDailyRes);
+
         }
         return getDailyResList;
     }
@@ -113,7 +115,6 @@ public class HomeService {
             List<Photo> photoList = photoRepository.findAllByDaily(getDaily);
             List<GetPhotoRes> photoListRes = checkPhotoList(photoList);
 
-            // 할일 2) post isPublic
             GetDailyRes getDailyRes = GetDailyRes.of(getDate, getDaily, getDiary, photoListRes);
             getDailyResList.add(getDailyRes);
         }
