@@ -70,9 +70,10 @@ public class JwtProvider {
         try {
             //검증
             Jws<Claims> claims = Jwts.parser().setSigningKey(refreshSecretKey).parseClaimsJws(refreshToken);
+
             //refresh 토큰의 만료시간이 지나지 않았을 경우, 새로운 access 토큰을 생성
             if (!claims.getBody().getExpiration().before(new Date())) {
-                String newAccessToken= recreationAccessToken(claims.getBody().get("sub").toString(), claims.getBody().get("roles"));
+                String newAccessToken= recreationAccessToken(claims.getBody().get("sub").toString(), claims.getBody().get("roles"),"recreate");
                 return TokenDto.builder().accessToken(newAccessToken).refreshToken(refreshToken).build();
 
             }
@@ -84,22 +85,38 @@ public class JwtProvider {
         return null;
     }
 
-    public String recreationAccessToken(String email, Object roles){
+    public String recreationAccessToken(String email, Object roles,String type) {
 
+        System.out.println("roles="+roles);
         Claims claims = Jwts.claims().setSubject(email); // JWT payload 에 저장되는 정보단위
         claims.put("roles", roles); // 정보는 key / value 쌍으로 저장된다.
         Date now = new Date();
 
-        //Access Token
-        String accessToken = Jwts.builder()
-                .setClaims(claims) // 정보 저장
-                .setIssuedAt(now) // 토큰 발행 시간 정보
-                .setExpiration(new Date(now.getTime() + accessTokenValidTime)) // set Expire Time
-                .signWith(SignatureAlgorithm.HS256, accessSecretKey)  // 사용할 암호화 알고리즘과
-                // signature 에 들어갈 secret값 세팅
-                .compact();
 
-        return accessToken;
+        if (type.equals("recreate")) {
+            //Access Token
+            String accessToken = Jwts.builder()
+                    .setClaims(claims) // 정보 저장
+                    .setIssuedAt(now) // 토큰 발행 시간 정보
+                    .setExpiration(new Date(now.getTime() + accessTokenValidTime)) // set Expire Time
+                    .signWith(SignatureAlgorithm.HS256, accessSecretKey)  // 사용할 암호화 알고리즘과
+                    // signature 에 들어갈 secret값 세팅
+                    .compact();
+
+            return accessToken;
+        } else if (type.equals("logout")) {
+            String accessToken = Jwts.builder()
+                    .setClaims(claims) // 정보 저장
+                    .setIssuedAt(now) // 토큰 발행 시간 정보
+                    .setExpiration(new Date(now.getTime() + 30*1000) )// set Expire Time
+                    .signWith(SignatureAlgorithm.HS256, accessSecretKey)  // 사용할 암호화 알고리즘과
+                    // signature 에 들어갈 secret값 세팅
+                    .compact();
+
+            return accessToken;
+        }
+        else return "accessToken 생성 오류: type null";
+
     }
 
     // 권한정보 획득
@@ -132,6 +149,7 @@ public class JwtProvider {
     // 토큰 검증
     public boolean validateToken(String token) {
         try {
+
             // Bearer 검증
             if (!token.substring(0, "BEARER ".length()).equalsIgnoreCase("BEARER ")) {
                 return false;
@@ -144,5 +162,13 @@ public class JwtProvider {
         } catch (Exception e) {
             return false;
         }
+    }
+
+    public Object getRoles(String accessToken){
+        Jws<Claims> claims2 = Jwts.parser().setSigningKey(accessSecretKey).parseClaimsJws(accessToken);
+        Object roles=claims2.getBody().get("roles");
+        return roles;
+
+
     }
 }
