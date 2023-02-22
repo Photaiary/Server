@@ -1,6 +1,7 @@
-package com.photaiary.Photaiary.post.diary;
+package com.photaiary.Photaiary.post.diary.dto;
 
 import com.photaiary.Photaiary.post.daily.entity.Daily;
+import com.photaiary.Photaiary.post.diary.Diary;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,21 +11,13 @@ import lombok.NoArgsConstructor;
 public class DiaryPostRequestDto {  //Controller와 Service 사이에서 사용할 Dto 클래스
     private String diaryTitle;
     private String diaryContent;
-    private Daily daily;
+    private String dailyValue;
 
     @Builder
-    public DiaryPostRequestDto(String diaryTitle, String diaryContent, Daily daily) {
+    public DiaryPostRequestDto(String diaryTitle, String diaryContent, String dailyValue) {
         this.diaryTitle = diaryTitle;
         this.diaryContent = diaryContent;
-        this.daily = daily;
-    }
-
-    public Diary toEntity(){ //간접적으로 Entity 테이블과 연결된 Posts의 생성자를 이용한 초기화를 진행한다.
-        return Diary.builder()
-                .diaryTitle(diaryTitle)
-                .diaryContent(diaryContent)
-                .daily(daily)
-                .build();
+        this.dailyValue = dailyValue;
     }
 }
 
