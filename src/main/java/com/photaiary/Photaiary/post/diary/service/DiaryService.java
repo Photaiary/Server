@@ -50,13 +50,18 @@ public class DiaryService {
     }
 
     @Transactional
-    public Diary updateByIdAndDiaryIndex(Long dailyIndex, DiaryUpdateRequestDto requestDto) {
-        Diary foundDiary = diaryRepository.findById(dailyIndex).get();
+    public Long update(Long id, DiaryUpdateRequestDto requestDto) throws Exception{
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Optional<User> user = userRepository.findByEmail(auth.getName());
 
+        if (!user.isPresent()) {
+            throw new NoUserException("유효하지 않은 사용자 입니다.");
+        }
 
-        return null;
-    }
-    public List<Diary> findAll() throws Exception{
-        return diaryRepository.findAll();
+        Diary diary = diaryRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("해당 게시글이 없습니다. id=" + id));
+
+        diary.update(requestDto.getDiaryTitle(), requestDto.getDiaryContent());
+
+        return id;
     }
 }
