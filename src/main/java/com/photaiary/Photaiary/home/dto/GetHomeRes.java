@@ -1,5 +1,6 @@
 package com.photaiary.Photaiary.home.dto;
 
+import com.photaiary.Photaiary.user.entity.User;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -14,4 +15,10 @@ public class GetHomeRes {
     // daily 정보
     private List<GetDailyRes> getDailyResList;
 
+    public static GetHomeRes of(User user, List<GetDailyRes> getDailyResList) {
+        return GetHomeRes.builder()
+                .userIndex(user.getUserIndex())
+                .getDailyResList(getDailyResList)
+                .build();
+    }
 }
