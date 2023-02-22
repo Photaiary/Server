@@ -29,5 +29,10 @@ public class Diary {
         this.diaryTitle = diaryTitle;
         this.diaryContent = diaryContent;
     }
+
+    public void update(String diaryTitle, String diaryContent) {
+        this.diaryTitle = diaryTitle;
+        this.diaryContent = diaryContent;
+    }
 }
 
