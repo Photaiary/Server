@@ -35,7 +35,7 @@ public class FriendController {
         Map<Integer, Object> response = new HashMap<>();
         Map<String, String> data = new HashMap<>();
 
-        HttpStatus result = service.makeFriend(requestDto);
+        service.makeFriend(requestDto);
 
         data.put("isSuccess", "true");
         response.put(HttpStatus.OK.value(), data);
@@ -50,7 +50,7 @@ public class FriendController {
         Map<Integer, Object> response = new HashMap<>();
         Map<String, String> data = new HashMap<>();
 
-        HttpStatus result = service.unFollow(requestDto);
+        service.unFollow(requestDto);
 
         data.put("isDelete", "true");
         response.put(HttpStatus.OK.value(), data);
