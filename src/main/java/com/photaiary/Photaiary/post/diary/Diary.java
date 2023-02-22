@@ -23,9 +23,12 @@ public class Diary {
     private String diaryContent;
 
     @Builder
-    public Diary(Long diaryIndex, Daily daily, String diaryTitle, String diaryContent) {
-        this.diaryIndex = diaryIndex;
+    public Diary( Daily daily, String diaryTitle, String diaryContent) {
         this.daily = daily;
+        this.diaryTitle = diaryTitle;
+        this.diaryContent = diaryContent;
+    }
+    public void update(String diaryTitle, String diaryContent) {
         this.diaryTitle = diaryTitle;
         this.diaryContent = diaryContent;
     }

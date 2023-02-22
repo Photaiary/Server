@@ -1,5 +1,7 @@
 package com.photaiary.Photaiary.global.exception;
 
+import com.photaiary.Photaiary.friend.exception.FriendErrorHandler;
+import com.photaiary.Photaiary.friend.exception.custom.FriendCustomException;
 import com.photaiary.Photaiary.post.photo.controller.exception.PhotoErrorHandler;
 import com.photaiary.Photaiary.post.photo.controller.exception.custom.VoException;
 import org.springframework.http.HttpHeaders;
@@ -18,7 +20,7 @@ import java.util.Date;
 @ControllerAdvice // 모든 Controller 가 실행될 때 반드시 실행됨
 public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
 
-//    @ExceptionHandler(Exception.class)
+    //    @ExceptionHandler(Exception.class)
 //    public final ResponseEntity<Object> handleAllExceptions(Exception ex, WebRequest request){
 //        ExceptionResponse exceptionResponse =
 //                new ExceptionResponse(new Date(), HttpStatus.INTERNAL_SERVER_ERROR.value(),
@@ -26,6 +28,12 @@ public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExce
 //
 //        return new ResponseEntity(exceptionResponse, HttpStatus.INTERNAL_SERVER_ERROR); // 500 error
 //    }
+    @ExceptionHandler(FriendCustomException.class)
+    public final ResponseEntity<Object> handleFriendExceptions(Exception ex, WebRequest request) {
+        FriendErrorHandler friendErrorHandler = new FriendErrorHandler(ex, request);
+        ExceptionResponse exceptionResponse = friendErrorHandler.handleError();
+        return new ResponseEntity(exceptionResponse,HttpStatus.INTERNAL_SERVER_ERROR);
+    }
     @ExceptionHandler(VoException.class)
     public final ResponseEntity<Object> handlePhotoExceptions(Exception ex, WebRequest request) {
         PhotoErrorHandler photoErrorHandler = new PhotoErrorHandler(ex, request);
@@ -51,5 +59,4 @@ public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExce
 
         return new ResponseEntity(exceptionResponse, HttpStatus.BAD_REQUEST);
     }
-
 }
