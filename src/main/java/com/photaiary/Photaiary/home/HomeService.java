@@ -66,59 +66,45 @@ public class HomeService {
         return GetHomeRes.of(friend.get(), getDailyResList);
     }
 
-    private List<GetDailyRes> getFriendDailyResList(User user, String date) {
-        List<GetDailyRes> getDailyResList = new ArrayList<>();
-        for (int i = 0; i < 7; i++) {
-            // 날짜 얻기
-            String getDate = getDate(date, i);
-
-            // daily (날짜)
-            Optional<Daily> daily = dailyReposiotry.getDailyByUserAndValue(user, getDate);
-            Daily getDaily = checkDaily(daily, user, getDate);
-
-            // diary (게시글)
-            Optional<Diary> diary = diaryRepository.findByDaily(getDaily);
-            Diary getDiary = checkDiary(diary, getDaily);
-
-            // photoList  - 할일 1) 태그 처리 하기
-            List<Photo> photoList = photoRepository.findAllByDaily(getDaily);
-            List<GetPhotoRes> photoListRes = checkPhotoList(photoList);
-
-            GetDailyRes getDailyRes;
-            if(!getDiary.isPublic()){
-                getDailyRes = GetDailyRes.ofFalseDiary(getDate, getDaily, getDiary, photoListRes);
-            }else{
-                getDailyRes = GetDailyRes.of(getDate, getDaily, getDiary, photoListRes);
-            }
-            getDailyResList.add(getDailyRes);
-
-        }
-        return getDailyResList;
-    }
-
     private List<GetDailyRes> getDailyResList(User user, String date) {
         List<GetDailyRes> getDailyResList = new ArrayList<>();
         // date를 기준으로 일주일 치의 정보를 가지고 와야함
         for (int i = 0; i < 7; i++) {
-            // 날짜 얻기
-            String getDate = getDate(date, i);
-
-            // daily (날짜)
-            Optional<Daily> daily = dailyReposiotry.getDailyByUserAndValue(user, getDate);
-            Daily getDaily = checkDaily(daily, user, getDate);
-
-            // diary (게시글)
-            Optional<Diary> diary = diaryRepository.findByDaily(getDaily);
-            Diary getDiary = checkDiary(diary, getDaily);
-
-            // photoList  - 할일 1) 태그 처리 하기
-            List<Photo> photoList = photoRepository.findAllByDaily(getDaily);
-            List<GetPhotoRes> photoListRes = checkPhotoList(photoList);
-
-            GetDailyRes getDailyRes = GetDailyRes.of(getDate, getDaily, getDiary, photoListRes);
+            GetDailyRes getDailyRes = getDailyRes(user, date, i);
             getDailyResList.add(getDailyRes);
         }
         return getDailyResList;
+    }
+
+    private List<GetDailyRes> getFriendDailyResList(User user, String date) {
+        List<GetDailyRes> getDailyResList = new ArrayList<>();
+        for (int i = 0; i < 7; i++) {
+            GetDailyRes getDailyRes = getDailyRes(user, date, i);
+            if(!getDailyRes.getIsPublic()){
+                getDailyRes.changeFrinedDiaryInfo();
+            }
+            getDailyResList.add(getDailyRes);
+        }
+        return getDailyResList;
+    }
+
+    private GetDailyRes getDailyRes(User user, String date, int i) {
+        // 날짜 얻기
+        String getDate = getDate(date, i);
+
+        // daily (날짜)
+        Optional<Daily> daily = dailyReposiotry.getDailyByUserAndValue(user, getDate);
+        Daily getDaily = checkDaily(daily, user, getDate);
+
+        // diary (게시글)
+        Optional<Diary> diary = diaryRepository.findByDaily(getDaily);
+        Diary getDiary = checkDiary(diary, getDaily);
+
+        // photoList  - 할일 1) 태그 처리 하기
+        List<Photo> photoList = photoRepository.findAllByDaily(getDaily);
+        List<GetPhotoRes> photoListRes = checkPhotoList(photoList);
+
+        return GetDailyRes.of(getDate, getDaily, getDiary, photoListRes);
     }
 
     private String getDate(String date, int cnt) {
@@ -167,4 +153,5 @@ public class HomeService {
         }
         return photoListRes;
     }
+
 }
