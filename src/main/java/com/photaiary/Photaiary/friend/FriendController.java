@@ -18,12 +18,7 @@ import java.util.Optional;
 //@Api(tags={"4.친구 관련 API"}, description = "FriendController")
 @RestController
 @RequiredArgsConstructor
-
-/**
- * 수정사항:
- * [Refactor] addFollow 구조 개선
- */
-
+@Api(tags ="4. 친구 관련 API")
 public class FriendController {
 
 
