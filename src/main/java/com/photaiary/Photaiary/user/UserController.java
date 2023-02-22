@@ -15,10 +15,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -131,12 +128,11 @@ public class UserController {
         return new ResponseEntity<>(DefaultRes.res(signService.updateBirthdate(birthdate)),HttpStatus.OK);
     }
 
-    @PutMapping("/user/logout")
-    public ResponseEntity<DefaultRes> logout(@RequestBody HashMap<String, String> emailMap)throws Exception
+    @GetMapping("/user/logout")
+    public ResponseEntity<DefaultRes> logout()throws Exception
     {
-        String email=emailMap.get("email");
 
-        return new ResponseEntity<>(DefaultRes.res(signService.logout(email)),HttpStatus.OK);
+        return new ResponseEntity<>(DefaultRes.res(signService.logout()),HttpStatus.OK);
     }
 
 }

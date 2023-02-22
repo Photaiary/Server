@@ -18,6 +18,7 @@ import java.io.IOException;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtProvider jwtProvider;
+    private String accessToken;
     private String email;
 
 
@@ -30,8 +31,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String token = jwtProvider.resolveToken(request);
 
-
-
 //        if(token==null){
 //            return;
 //        }
@@ -41,6 +40,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             token = token.split(" ")[1].trim();
             Authentication auth = jwtProvider.getAuthentication(token);
             System.out.println("토큰정보="+token);
+            this.accessToken=token;
+
             this.email=jwtProvider.getEmail(token);
             System.out.println("이메일정보"+this.email);
             SecurityContextHolder.getContext().setAuthentication(auth);

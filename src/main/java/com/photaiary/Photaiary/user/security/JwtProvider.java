@@ -70,6 +70,7 @@ public class JwtProvider {
         try {
             //검증
             Jws<Claims> claims = Jwts.parser().setSigningKey(refreshSecretKey).parseClaimsJws(refreshToken);
+
             //refresh 토큰의 만료시간이 지나지 않았을 경우, 새로운 access 토큰을 생성
             if (!claims.getBody().getExpiration().before(new Date())) {
                 String newAccessToken= recreationAccessToken(claims.getBody().get("sub").toString(), claims.getBody().get("roles"),"recreate");
@@ -161,5 +162,13 @@ public class JwtProvider {
         } catch (Exception e) {
             return false;
         }
+    }
+
+    public Object getRoles(String accessToken){
+        Jws<Claims> claims2 = Jwts.parser().setSigningKey(accessSecretKey).parseClaimsJws(accessToken);
+        Object roles=claims2.getBody().get("roles");
+        return roles;
+
+
     }
 }

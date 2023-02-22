@@ -9,6 +9,8 @@ import com.photaiary.Photaiary.user.entity.UserRepository;
 import com.photaiary.Photaiary.user.security.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -62,8 +64,14 @@ public class SignService {
         return signResponseDto.getToken();
     }
 
-    public boolean logout(String email){
-        String newAccessToken= jwtProvider.recreationAccessToken(email,"ROLE_USER","logout");
+    public boolean logout() throws Exception{
+
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+         Optional<User> findUser = userRepository.findByEmail(auth.getName());
+        User user=findUser.orElseThrow(() -> new Exception("계정을 찾을 수 없습니다."));
+
+        refreshTokenRepository.deleteByKeyEmail(user.getEmail());
         return true;
     }
 
@@ -111,7 +119,7 @@ public class SignService {
     }
 
     @Transactional
-    public boolean updateTheme(String theme) throws Exception {
+    public String[] updateTheme(String theme) throws Exception {
         String email = jwtAuthenticationFilter.getEmail();
         System.out.println("service에서 보내는 이메일 정보=" + email);
         User user = userRepository.findByEmail(email).orElseThrow(() -> new Exception("계정을 찾을 수 없습니다."));
@@ -144,6 +152,10 @@ public class SignService {
     }
     @Transactional
     public boolean updateName(String name) throws Exception {
+
+//        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+//        Optional<User> user = userRepository.findByEmail(auth.getName());
+//
         String email = jwtAuthenticationFilter.getEmail();
 //        System.out.println("service에서 보내는 이메일 정보=" + email);
         User user = userRepository.findByEmail(email).orElseThrow(() -> new Exception("계정을 찾을 수 없습니다."));
@@ -161,6 +173,7 @@ public class SignService {
     }
 
 
+    @Transactional
     public boolean withdraw(LoginDto request) throws Exception {
         User user = userRepository.findByEmail(request.getEmail()).orElseThrow(() -> new Exception("회원이 존재하지 않습니다"));
 

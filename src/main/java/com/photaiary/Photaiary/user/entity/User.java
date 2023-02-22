@@ -71,6 +71,7 @@ public class User {
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<Authority> roles = new ArrayList<>();
 
+
     public void setRoles(List<Authority> role) {
         this.roles = role;
         role.forEach(o -> o.setUser(this));
@@ -92,18 +93,25 @@ public class User {
     }
 
     //update 매서드들
-    public boolean updateTheme(String theme)throws Exception{
+    public String[] updateTheme(String theme)throws Exception{
 
-        if(theme.equals("blue"))
-            this.theme=Theme.blue;
-        else if(theme.equals("red"))
-            this.theme=Theme.red;
-        else if(theme.equals("grey"))
-            this.theme=Theme.grey;
 
-        else throw new Exception("해당 theme 없음");
+        if(theme.equals("blue")) {
+            this.theme = Theme.blue;
+            return new String[]{"One", "Two", "Three", "Four"};
+        }
+        else if(theme.equals("brown")) {
+            this.theme = Theme.brown;
+            return new String[]{"One", "Two", "Three", "Four"};
+        }
+        else if(theme.equals("green")) {
+            this.theme = Theme.green;
+            return new String[]{"One", "Two", "Three", "Four"};
+        }
+        else {
+            throw new Exception("해당 theme 없음");
 
-        return true;
+        }
 
     }
 
