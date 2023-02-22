@@ -2,10 +2,12 @@ package com.photaiary.Photaiary.post;
 
 import com.photaiary.Photaiary.post.diary.Diary;
 import com.photaiary.Photaiary.post.diary.dto.DiaryPostRequestDto;
+import com.photaiary.Photaiary.post.diary.dto.DiaryUpdateRequestDto;
 import com.photaiary.Photaiary.post.diary.service.DiaryService;
 import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -21,7 +23,7 @@ public class PostController {
     private int status;
 
     @PostMapping("/daily/diary") //index 삭제
-    public Map<Integer, Object> postDiary(@RequestBody DiaryPostRequestDto requestDto) throws Exception{
+    public ResponseEntity<Map<Integer, Object>> postDiary(@RequestBody DiaryPostRequestDto requestDto) throws Exception{
         Map<Integer, Object> response = new HashMap<>();
         Map<String, Object> data = new HashMap<>();
 
@@ -31,12 +33,20 @@ public class PostController {
         data.put("success", "true");
         response.put(status, data);
 
-        return response;
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    @GetMapping("/daily/{dailyIndex}/diary")
-    public List<Diary> findAll(@PathVariable Long dailyIndex) throws Exception{
-        return diaryService.findAll();
-    }
+    @PutMapping("/daily/{dailyIndex}")
+    public ResponseEntity<Map<Integer, Object>> updateDiary(@PathVariable Long dailyIndex, @RequestBody DiaryUpdateRequestDto requestDto) throws Exception{
+        Map<Integer, Object> response = new HashMap<>();
+        Map<String, Object> data = new HashMap<>();
 
+        diaryService.update(dailyIndex, requestDto);
+
+        status = HttpStatus.OK.value();
+        data.put("success", "true");
+        response.put(status, data);
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
 }
