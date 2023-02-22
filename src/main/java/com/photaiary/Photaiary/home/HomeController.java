@@ -32,10 +32,10 @@ public class HomeController {
     @ApiOperation(value = "친구 화면")
     @ApiResponses({
             @ApiResponse(code = 200, message = "OK", response = GetHomeRes.class)})
-    @GetMapping("/daily/{userEmail}/{date}")
-    public ResponseEntity<DefaultRes> getFriendHome(@PathVariable String userEmail,
+    @GetMapping("/daily/{userNickname}/{date}")
+    public ResponseEntity<DefaultRes> getFriendHome(@PathVariable String userNickname,
                                                     @PathVariable String date) throws NoUserException {
-        return new ResponseEntity<>(DefaultRes.res(homeService.getFriendHome(userEmail, date)), HttpStatus.OK);
+        return new ResponseEntity<>(DefaultRes.res(homeService.getFriendHome(userNickname, date)), HttpStatus.OK);
     }
 
 }

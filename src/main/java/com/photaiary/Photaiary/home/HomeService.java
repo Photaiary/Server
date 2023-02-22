@@ -49,7 +49,7 @@ public class HomeService {
     }
 
     @Transactional
-    public GetHomeRes getFriendHome(String userEmail, String date) throws NoUserException {
+    public GetHomeRes getFriendHome(String userNickname, String date) throws NoUserException {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         Optional<User> user = userRepository.findByEmail(auth.getName());
 
@@ -57,7 +57,7 @@ public class HomeService {
             throw new NoUserException("유효하지 않은 사용자 입니다.");
         }
 
-        Optional<User> friend = userRepository.findByEmail(userEmail);
+        Optional<User> friend = userRepository.findByNickname(userNickname);
         if(friend.isEmpty()){
             throw new NoUserException("존재하지 않은 사용자 입니다.");
         }
