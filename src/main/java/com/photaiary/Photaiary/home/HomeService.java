@@ -12,7 +12,6 @@ import com.photaiary.Photaiary.post.photo.entity.Photo;
 import com.photaiary.Photaiary.post.photo.repository.PhotoRepository;
 import com.photaiary.Photaiary.user.entity.User;
 import com.photaiary.Photaiary.user.entity.UserRepository;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -20,11 +19,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -40,7 +37,6 @@ public class HomeService {
 
     @Transactional
     public GetHomeRes getHome(String date) throws ParseException, NoUserException {
-
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         Optional<User> user = userRepository.findByEmail(auth.getName());
 
@@ -48,23 +44,55 @@ public class HomeService {
             throw new NoUserException("유효하지 않은 사용자 입니다.");
         }
 
+        List<GetDailyRes> getDailyResList = getDailyResList(user.get(), date);
+        return homeResponse(user.get(), getDailyResList);
+    }
+
+    @Transactional
+    public GetHomeRes getFriendHome(String userNickname, String date) throws NoUserException {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Optional<User> user = userRepository.findByEmail(auth.getName());
+
+        if (!user.isPresent()) {
+            throw new NoUserException("유효하지 않은 사용자 입니다.");
+        }
+
+        Optional<User> friend = userRepository.findByNickname(userNickname);
+        if(friend.isEmpty()){
+            throw new NoUserException("존재하지 않은 사용자 입니다.");
+        }
+
+        List<GetDailyRes> getDailyResList = getDailyResList(friend.get(), date);
+        return homeResponse(friend.get(), getDailyResList);
+    }
+
+    private GetHomeRes homeResponse(User user, List<GetDailyRes> getDailyResList){
+        return GetHomeRes.builder()
+                .userIndex(user.getUserIndex())
+                .getDailyResList(getDailyResList)
+                .build();
+    }
+
+
+    private List<GetDailyRes> getDailyResList(User user, String date) {
         List<GetDailyRes> getDailyResList = new ArrayList<>();
         // date를 기준으로 일주일 치의 정보를 가지고 와야함
         for (int i = 0; i < 7; i++) {
             // 1) 마지막날 계산 : 28, 30, 31
+
             LocalDate localDate = LocalDate.parse(date, DateTimeFormatter.ofPattern("yyyyMMdd"));
 
             localDate = localDate.plusDays(i);
             String getDate = localDate.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
 
             // 만약 값이 없으면?
-            Optional<Daily> daily = dailyReposiotry.getDailyByUserAndValue(user.get(), getDate);
+            Optional<Daily> daily = dailyReposiotry.getDailyByUserAndValue(user, getDate);
             List<GetPhotoRes> photoListRes = new ArrayList<>();
 
             Daily getDaily;
             if(daily.isEmpty()){
                 Daily createDaily = Daily.builder()
-                        .user(user.get())
+                        .user(user)
                         .dailyValue(getDate)
                         .build();
                 Daily saveDaily = dailyReposiotry.save(createDaily);
@@ -117,10 +145,7 @@ public class HomeService {
 
             getDailyResList.add(getDailyRes);
         }
-
-        return GetHomeRes.builder()
-                .userIndex(user.get().getUserIndex())
-                .getDailyResList(getDailyResList)
-                .build();
+        return getDailyResList;
     }
+
 }

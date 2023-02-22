@@ -21,7 +21,7 @@ import java.util.List;
 @EntityListeners(AuditingEntityListener.class)
 @Setter
 //@SQLDelete(sql = "UPDATE  SET status = Status.UNACTIVE WHERE id = ?")
-@Where(clause = "deleted_at IS NULL")
+//@Where(clause = "deleted_at IS NULL")
 @SQLDelete(sql = "UPDATE user SET deleted_at = CURRENT_TIMESTAMP where user_index = ?")
 public class User {
     @Id
