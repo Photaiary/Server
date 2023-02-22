@@ -1,5 +1,6 @@
 package com.photaiary.Photaiary.home.dto;
 
+import com.photaiary.Photaiary.post.photo.entity.Photo;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -16,4 +17,15 @@ public class GetPhotoRes {
     private String comment;
 
     private List<String> tags;
+
+    public static GetPhotoRes of(Photo photo){
+        return GetPhotoRes.builder()
+                .id(photo.getId())
+                .latitude(photo.getLatitude())
+                .longitude(photo.getLongitude())
+                .image(photo.getImage())
+                .comment(photo.getComment())
+                .build();
+    }
+
 }
