@@ -114,8 +114,8 @@ public class SignService {
     public String idChk(String nickname) {
         Optional<User> result = userRepository.findByNickname(nickname);
         if (result.isPresent())
-            return "이미 사용 중";
-        else return "사용 가능";
+            return "false";
+        else return "true";
     }
 
     @Transactional
