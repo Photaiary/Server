@@ -12,14 +12,14 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 public class PhotoRequest implements Serializable {
-    private Long dailyId;
+    private String dailyValue;
     private String comment = "";
     private String tagListString = "EMPTY";
 
 
     @Builder
-    public PhotoRequest(Long dailyId, String comment, String tagListString) {
-        this.dailyId = dailyId;
+    public PhotoRequest(String dailyValue, String comment, String tagListString) {
+        this.dailyValue = dailyValue;
         this.comment = comment;
         this.tagListString = tagListString;
     }

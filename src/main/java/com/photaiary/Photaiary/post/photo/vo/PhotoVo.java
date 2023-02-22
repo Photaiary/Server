@@ -56,6 +56,8 @@ public class PhotoVo {
             throw new NoLocationException("파일 입출력에 실패하였습니다. 사유 : " + e.getMessage());
         } catch (ImageProcessingException e) {
             throw new NoLocationException("GPS 정보가 존재하지 않습니다. 사유 : " + e.getMessage());
+        } catch (NullPointerException e) {
+            throw new NoLocationException("GPS 정보가 존재하지 않습니다. 사유 : " + e.getMessage());
         }
     }
 }

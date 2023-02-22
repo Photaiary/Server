@@ -16,7 +16,7 @@ public class Daily {
     @Column(name = "dailyIndex")
     private Long dailyIndex;
 
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    @ManyToOne
     @JoinColumn(name = "userIndex", nullable = false)
     private User user;
 
