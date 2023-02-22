@@ -1,8 +1,12 @@
-package com.photaiary.Photaiary.post.diary;
+package com.photaiary.Photaiary.post.diary.service;
 
 import com.photaiary.Photaiary.post.daily.entity.Daily;
 import com.photaiary.Photaiary.post.daily.repository.DailyReposiotry;
+import com.photaiary.Photaiary.post.diary.Diary;
+import com.photaiary.Photaiary.post.diary.DiaryRepository;
 import com.photaiary.Photaiary.post.diary.dto.DiaryPostRequestDto;
+import com.photaiary.Photaiary.post.diary.dto.DiaryUpdateRequestDto;
+import com.photaiary.Photaiary.post.diary.exception.custom.NoUserException;
 import com.photaiary.Photaiary.user.entity.User;
 import com.photaiary.Photaiary.user.entity.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -24,29 +28,35 @@ public class DiaryService {
     public Diary save(DiaryPostRequestDto requestDto) throws Exception{
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         Optional<User> user = userRepository.findByEmail(auth.getName());
+
         if (!user.isPresent()) {
             throw new NoUserException("유효하지 않은 사용자 입니다.");
         }
-        Optional<Daily> daily = dailyReposiotry.getDailyByUserAndValue(user.get(), requestDto.getDaily().getDailyValue());
+
+        Optional<Daily> daily = dailyReposiotry.getDailyByUserAndValue(user.get(), requestDto.getDailyValue());
         if (!daily.isPresent()) {
             Daily daily_new = Daily.builder()
-                    .dailyValue(requestDto.getDaily().getDailyValue())
+                    .dailyValue(requestDto.getDailyValue()) //지금 요청값에서 데일리 값을 받아 오는데.
                     .user(user.get()).build();
+
             daily = Optional.of(dailyReposiotry.save(daily_new));
         }
+        Diary diary = Diary.builder()
+                .daily(daily.get())
+                .diaryTitle(requestDto.getDiaryTitle())
+                .diaryContent(requestDto.getDiaryContent())
+                .build();
+        return diaryRepository.save(diary);
     }
 
     @Transactional
     public Diary updateByIdAndDiaryIndex(Long dailyIndex, DiaryUpdateRequestDto requestDto) {
         Diary foundDiary = diaryRepository.findById(dailyIndex).get();
 
-        if(foundDiary.getDiaryTitle() != null || foundDiary.getDiaryContent() != null) {
-            foundDiary.update(requestDto.getDiaryTitle(),requestDto.getDiaryContent() );
-            return foundDiary;
-        }
+
         return null;
     }
-    public List<Diary> findAll(){
-        return repository.findAll();
+    public List<Diary> findAll() throws Exception{
+        return diaryRepository.findAll();
     }
 }
