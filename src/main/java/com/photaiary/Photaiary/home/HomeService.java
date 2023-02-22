@@ -63,8 +63,7 @@ public class HomeService {
 
     private List<GetDailyRes> getDailyResList(User user, String date) {
         List<GetDailyRes> getDailyResList = new ArrayList<>();
-        // date를 기준으로 일주일 치의 정보를 가지고 와야함
-        for (int i = 0; i < 7; i++) {
+        for (int i = 0; i < 7; i++) {  // date를 기준으로 일주일 치의 정보를 가지고 와야함
             GetDailyRes getDailyRes = getDailyRes(user, date, i);
             getDailyResList.add(getDailyRes);
         }
@@ -84,22 +83,11 @@ public class HomeService {
     }
 
     private GetDailyRes getDailyRes(User user, String date, int i) {
-        // 날짜 얻기
-        String getDate = getDate(date, i);
-
-        // daily (날짜)
-        Optional<Daily> daily = dailyReposiotry.getDailyByUserAndValue(user, getDate);
-        Daily getDaily = checkDaily(daily, user, getDate);
-
-        // diary (게시글)
-        Optional<Diary> diary = diaryRepository.findByDaily(getDaily);
-        Diary getDiary = checkDiary(diary, getDaily);
-
-        // photoList  - 할일 1) 태그 처리 하기
-        List<Photo> photoList = photoRepository.findAllByDaily(getDaily);
-        List<GetPhotoRes> photoListRes = checkPhotoList(photoList);
-
-        return GetDailyRes.of(getDate, getDaily, getDiary, photoListRes);
+        String getDate = getDate(date, i); // 날짜 얻기
+        Daily getDaily = getDaily(user, getDate); // daily (날짜)
+        Diary getDiary = getDiary(getDaily); // diary (게시글)
+        List<GetPhotoRes> getPhotoResList = getPhotoList(getDaily); // 날짜 별 사진 얻기
+        return GetDailyRes.of(getDate, getDaily, getDiary, getPhotoResList);
     }
 
     private String getDate(String date, int cnt) {
@@ -109,7 +97,8 @@ public class HomeService {
         return getDate;
     }
 
-    private Daily checkDaily(Optional<Daily> daily, User user, String getDate) {
+    private Daily getDaily(User user, String getDate) {
+        Optional<Daily> daily = dailyReposiotry.getDailyByUserAndValue(user, getDate);
         Daily getDaily;
         if(daily.isEmpty()){
             Daily createDaily = Daily.toEntity(user, getDate);
@@ -121,7 +110,8 @@ public class HomeService {
         return getDaily;
     }
 
-    private Diary checkDiary(Optional<Diary> diary, Daily getDaily) {
+    private Diary getDiary(Daily getDaily) {
+        Optional<Diary> diary = diaryRepository.findByDaily(getDaily);
         Diary getDiary;
         if(diary.isEmpty()){
             Diary createDiary = Diary.toEntity(getDaily);
@@ -133,15 +123,17 @@ public class HomeService {
         return getDiary;
     }
 
-    private List<GetPhotoRes> checkPhotoList(List<Photo> photoList) {
-        List<GetPhotoRes> photoListRes = new ArrayList<>();
+    // - 할일 1) 태그 처리 하기
+    private List<GetPhotoRes> getPhotoList(Daily getDaily) {
+        List<Photo> photoList = photoRepository.findAllByDaily(getDaily);
+        List<GetPhotoRes> getPhotoResList = new ArrayList<>();
         if (photoList.size() != 0) {
             for (Photo getPhoto : photoList) {
                 GetPhotoRes getPhotoRes = GetPhotoRes.of(getPhoto);
-                photoListRes.add(getPhotoRes);
+                getPhotoResList.add(getPhotoRes);
             }
         }
-        return photoListRes;
+        return getPhotoResList;
     }
 
 }
