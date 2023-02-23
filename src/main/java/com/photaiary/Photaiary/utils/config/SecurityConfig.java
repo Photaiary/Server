@@ -87,7 +87,7 @@ public class SecurityConfig {
                 // /admin으로 시작하는 요청은 ADMIN 권한이 있는 유저에게만 허용
                 .antMatchers("/admin/**").hasRole("ADMIN")
                 // /user 로 시작하는 요청은 USER 권한이 있는 유저에게만 허용
-                .antMatchers("/user/**", "/photo/**","/update/**", "/daily/**").hasRole("USER")
+                .antMatchers("/user/**", "/photo/**","/update/**", "/daily/**","/report/**").hasRole("USER")
                 .antMatchers("/user/**", "/photo/**").hasRole("USER")
                 .antMatchers("/user/**", "/daily/**").hasRole("USER")
                 .antMatchers("/user/**", "/diary/**").hasRole("USER")

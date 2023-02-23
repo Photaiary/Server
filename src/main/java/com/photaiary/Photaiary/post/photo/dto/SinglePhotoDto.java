@@ -6,5 +6,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Getter
 public class SinglePhotoDto {
-    Long photoId;
+    Long photoIndex;
 }

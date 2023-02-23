@@ -62,7 +62,7 @@ public class PhotoService {
                     .deleteStatus(DeleteStatus.exist)
                     .image(bucketVo.getImageLink())
                     .daily(daily.get())
-                    .tag(photoRequestValidator.getStringTag(photoRequest.getTagListString()))
+                    .tag(photoRequestValidator.getStringTag(photoRequest.getTag()))
                     .build();
             return photoRepository.save(photo).getId();
     }
@@ -102,7 +102,7 @@ public class PhotoService {
     @Transactional
     public Boolean photoDelete(SinglePhotoDto singlePhotoDto) throws VoException  {
         try {
-            return photoRepository.deleteByRequestId(singlePhotoDto.getPhotoId());
+            return photoRepository.deleteByRequestId(singlePhotoDto.getPhotoIndex());
         } catch (Exception e) {
             throw new VoException("파일이 존재하지 않습니다");
         }
@@ -111,7 +111,7 @@ public class PhotoService {
     @Transactional
     public Optional<SinglePhotoResponse> viewSinglePhoto(SinglePhotoDto singlePhotoDto) throws VoException {
         try {
-            Optional<Photo> photo = photoRepository.findById(singlePhotoDto.getPhotoId());
+            Optional<Photo> photo = photoRepository.findById(singlePhotoDto.getPhotoIndex());
             SinglePhotoResponse singlePhotoResponse = SinglePhotoResponse.builder()
                     .imgLink(photo.get().getImage())
                     .latitude(photo.get().getLatitude())
