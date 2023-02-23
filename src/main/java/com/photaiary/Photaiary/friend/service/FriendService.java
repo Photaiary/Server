@@ -4,12 +4,14 @@ import com.photaiary.Photaiary.friend.dto.FriendFollowRequestDto;
 import com.photaiary.Photaiary.friend.entity.Friend;
 import com.photaiary.Photaiary.friend.entity.FriendRepository;
 import com.photaiary.Photaiary.friend.exception.custom.AlreadyInitializedExceptionFriend;
-import com.photaiary.Photaiary.friend.exception.custom.ToUserNotFoundExceptionFriend;
+import com.photaiary.Photaiary.friend.exception.custom.NoUserException;
 import com.photaiary.Photaiary.user.entity.User;
 import com.photaiary.Photaiary.user.entity.UserRepository;
 import com.photaiary.Photaiary.user.security.JwtProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,50 +34,50 @@ public class FriendService {
         String fromUserEmail = jwtProvider.getEmail(requestDto.getFromUserToken());
         Optional<User> fromUser = userRepository.findByEmail(fromUserEmail);
 
-            String toUserEmail = requestDto.getToUserEmail();
-            Optional<User> toUser = userRepository.findByEmail(toUserEmail);
+        String toUserEmail = requestDto.getToUserEmail();
+        Optional<User> toUser = userRepository.findByEmail(toUserEmail);
 
-            boolean isFriend;
+        boolean isFriend;
 
-            if (toUser.isPresent()) { // 상대가 회원인가?
-                // YES
-                Friend requestedFriend = Friend.builder()
-                        .toUser(toUser.get())
-                        .fromUser(fromUser.get())
-                        .build();
+        if (toUser.isPresent()) { // 상대가 회원인가?
+            // YES
+            Friend requestedFriend = Friend.builder()
+                    .toUser(toUser.get())
+                    .fromUser(fromUser.get())
+                    .build();
 
-                List<Friend> friends = friendRepository.findAll();
-                Iterator<Friend> iterFriends = friends.iterator();
+            List<Friend> friends = friendRepository.findAll();
+            Iterator<Friend> iterFriends = friends.iterator();
 
-                while (iterFriends.hasNext()) {
+            while (iterFriends.hasNext()) {
 
-                    Friend iterFriend = iterFriends.next();
+                Friend iterFriend = iterFriends.next();
 
-                    isFriend = (
-                            (toUserEmail.equals(iterFriend.getToUser().getEmail()))
-                                    &&(fromUserEmail.equals(iterFriend.getFromUser().getEmail()))
-                    );
+                isFriend = (
+                        (toUserEmail.equals(iterFriend.getToUser().getEmail()))
+                                &&(fromUserEmail.equals(iterFriend.getFromUser().getEmail()))
+                );
 
-                    if (isFriend) { // 이미 친구?
-                        // YES
-                        throw new AlreadyInitializedExceptionFriend("이미 존재하는 친구입니다.");
-                        //return HttpStatus.BAD_REQUEST;
-                    }
+                if (isFriend) { // 이미 친구?
+                    // YES
+                    throw new AlreadyInitializedExceptionFriend("이미 존재하는 친구입니다.");
+                    //return HttpStatus.BAD_REQUEST;
                 }
-
-                //생성
-                friendRepository.save(Friend.builder()
-                        .toUser(toUser.get())
-                        .fromUser(fromUser.get())
-                        .build());
-
-                return HttpStatus.OK;
-
-            } else if (toUser.isEmpty()) {
-                throw  new ToUserNotFoundExceptionFriend("상대방이 존재 x");
             }
+
+            //생성
+            friendRepository.save(Friend.builder()
+                    .toUser(toUser.get())
+                    .fromUser(fromUser.get())
+                    .build());
+
+            return HttpStatus.OK;
+
+        } else if (toUser.isEmpty()) {
+            throw  new NoUserException("상대방이 존재 x");
+        }
         // CASE: 존재하지 않는 회원일 경우 (UserNotFoundException)
-            //return HttpStatus.NOT_FOUND;
+        //return HttpStatus.NOT_FOUND;
         return null;
     }
 
@@ -120,7 +122,7 @@ public class FriendService {
             throw new AlreadyInitializedExceptionFriend("존재하는 친구지만, 당신과 친구가 아닙니다.(삭제불가)");
         } else if (toUser.isEmpty()) {
             // CASE: this user is not exist (UserNotFoundException)
-            throw new ToUserNotFoundExceptionFriend("상대방이 존재하지 않는 회원입니다.(삭제불가)");
+            throw new NoUserException("상대방이 존재하지 않는 회원입니다.(삭제불가)");
         }
         return null;
     }
@@ -150,5 +152,19 @@ public class FriendService {
         }
 
         return myFriends; // the friends of the myUser (LIST TYPE)
+    }
+
+    @Transactional
+    public List<String> findByNicknameStartingWith(String keyword) throws Exception{
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Optional<User> user = userRepository.findByEmail(auth.getName());
+
+        if(!user.isPresent()){
+            throw new NoUserException("유효하지 않은 사용자입니다.");
+        }
+
+        List<String> searchedUsers = userRepository.findByNicknameContaining(keyword);
+
+        return searchedUsers;
     }
 }
