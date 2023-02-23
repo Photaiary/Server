@@ -155,7 +155,7 @@ public class FriendService {
     }
 
     @Transactional
-    public List<String> findByNicknameStartingWith(String keyword) throws Exception{
+    public String findByNicknameStartingWith(String keyword) throws Exception{
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         Optional<User> user = userRepository.findByEmail(auth.getName());
 
@@ -163,8 +163,12 @@ public class FriendService {
             throw new NoUserException("유효하지 않은 사용자입니다.");
         }
 
-        List<String> searchedUsers = userRepository.findByNicknameContaining(keyword);
+        Optional<String> searchedUsers = userRepository.findByNicknameContaining(keyword);//🔨
 
-        return searchedUsers;
+        if(!searchedUsers.isPresent()){//🔨
+            throw new NoUserException("존재하지 않는 닉네임 입니다.");
+        }
+
+        return searchedUsers.get();//🔨
     }
 }
