@@ -128,7 +128,7 @@ public class UserController {
         return new ResponseEntity<>(DefaultRes.res(signService.updateBirthdate(birthdate)),HttpStatus.OK);
     }
 
-    @GetMapping("/user/logout")
+    @GetMapping("/logout")
     public ResponseEntity<DefaultRes> logout()throws Exception
     {
 
