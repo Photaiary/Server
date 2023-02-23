@@ -6,6 +6,7 @@ import com.photaiary.Photaiary.user.security.JwtProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -76,6 +77,7 @@ public class SecurityConfig {
                 .and()
                 // 조건별로 요청 허용/제한 설정
                 .authorizeRequests()
+                .antMatchers(HttpMethod.OPTIONS, "/**/*").permitAll()
                 // 회원가입과 로그인은 모두 승인
                 .antMatchers(
                         "/v2/api-docs",
