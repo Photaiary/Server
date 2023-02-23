@@ -58,10 +58,10 @@ public class SecurityConfig {
                                 // Cors 허용 패턴
                                 CorsConfiguration config = new CorsConfiguration();
                                 config.setAllowedOrigins(
-                                        List.of("*")
+                                        List.of("localhost:3000", "http://3.34.242.12:8085")
                                 );
                                 config.setAllowedMethods(
-                                        List.of("*")
+                                        List.of("GET","POST","PUT","DELETE")
                                 );
 
 
