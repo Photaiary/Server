@@ -11,8 +11,8 @@ import java.util.Optional;
 
 @Transactional
 public interface UserRepository extends JpaRepository<User, Long> {
-    @Query("SELECT u.nickname FROM User u WHERE u.nickname LIKE :keyword%")
-    List<String> findByNicknameContaining(@Param("keyword") String keyword);
+    @Query("SELECT u.nickname FROM User u WHERE u.nickname LIKE :keyword")//🔨
+    Optional<String> findByNicknameContaining(@Param("keyword") String keyword);//🔨
     Optional<User> findByNickname(String nickname);
 
     Optional<User> findByEmail(String email);
