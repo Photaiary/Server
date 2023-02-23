@@ -36,8 +36,6 @@ public class ReportService {
             List<Photo> photos = photoRepository.findAll().stream().filter(h -> dailies.contains(h.getDaily())).collect(Collectors.toList());
 
             ReportResponse reportResponse = new ReportResponse();
-            System.out.println(reportResponse.getResult() == null);
-            System.out.println(reportResponse.getResult().isEmpty());
             Set<String> years = dailies.stream().map(h -> h.getDailyValue().substring(0, 4)).collect(Collectors.toSet());
             for (String year : years) {
                 List<Photo> tempPhoto = photos.stream().filter(p->p.getDaily()
