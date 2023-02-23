@@ -18,7 +18,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.text.ParseException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -36,88 +35,59 @@ public class HomeService {
     private final UserRepository userRepository;
 
     @Transactional
-    public GetHomeRes getHome(String date) throws ParseException, NoUserException {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        Optional<User> user = userRepository.findByEmail(auth.getName());
-
-        if (!user.isPresent()) {
-            throw new NoUserException("유효하지 않은 사용자 입니다.");
-        }
-
+    public GetHomeRes getHome(String date) throws NoUserException {
+        Optional<User> user = checkUserAuth();
         List<GetDailyRes> getDailyResList = getDailyResList(user.get(), date);
         return GetHomeRes.of(user.get(), getDailyResList);
     }
 
     @Transactional
     public GetHomeRes getFriendHome(String userNickname, String date) throws NoUserException {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        Optional<User> user = userRepository.findByEmail(auth.getName());
-
-        if (!user.isPresent()) {
-            throw new NoUserException("유효하지 않은 사용자 입니다.");
-        }
-
+        Optional<User> user = checkUserAuth();
         Optional<User> friend = userRepository.findByNickname(userNickname);
         if(friend.isEmpty()){
             throw new NoUserException("존재하지 않은 사용자 입니다.");
         }
-
         List<GetDailyRes> getDailyResList = getFriendDailyResList(friend.get(), date);
-
         return GetHomeRes.of(friend.get(), getDailyResList);
+    }
+
+    private Optional<User> checkUserAuth() throws NoUserException {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Optional<User> user = userRepository.findByEmail(auth.getName());
+        if (!user.isPresent()) {
+            throw new NoUserException("유효하지 않은 사용자 입니다.");
+        }
+        return user;
+    }
+
+    private List<GetDailyRes> getDailyResList(User user, String date) {
+        List<GetDailyRes> getDailyResList = new ArrayList<>();
+        for (int i = 0; i < 7; i++) {  // date를 기준으로 일주일 치의 정보를 가지고 와야함
+            GetDailyRes getDailyRes = getDailyRes(user, date, i);
+            getDailyResList.add(getDailyRes);
+        }
+        return getDailyResList;
     }
 
     private List<GetDailyRes> getFriendDailyResList(User user, String date) {
         List<GetDailyRes> getDailyResList = new ArrayList<>();
         for (int i = 0; i < 7; i++) {
-            // 날짜 얻기
-            String getDate = getDate(date, i);
-
-            // daily (날짜)
-            Optional<Daily> daily = dailyReposiotry.getDailyByUserAndValue(user, getDate);
-            Daily getDaily = checkDaily(daily, user, getDate);
-
-            // diary (게시글)
-            Optional<Diary> diary = diaryRepository.findByDaily(getDaily);
-            Diary getDiary = checkDiary(diary, getDaily);
-
-            // if -> Diary isPublic = flase -> photo xx
-
-            // photoList  - 할일 1) 태그 처리 하기
-            List<Photo> photoList = photoRepository.findAllByDaily(getDaily);
-            List<GetPhotoRes> photoListRes = checkPhotoList(photoList);
-
-            // 할일 2) post isPublic
-            GetDailyRes getDailyRes = GetDailyRes.of(getDate, getDaily, getDiary, photoListRes);
+            GetDailyRes getDailyRes = getDailyRes(user, date, i);
+            if(!getDailyRes.getIsPublic()){
+                getDailyRes.changeFrinedDiaryInfo();
+            }
             getDailyResList.add(getDailyRes);
         }
         return getDailyResList;
     }
 
-    private List<GetDailyRes> getDailyResList(User user, String date) {
-        List<GetDailyRes> getDailyResList = new ArrayList<>();
-        // date를 기준으로 일주일 치의 정보를 가지고 와야함
-        for (int i = 0; i < 7; i++) {
-            // 날짜 얻기
-            String getDate = getDate(date, i);
-
-            // daily (날짜)
-            Optional<Daily> daily = dailyReposiotry.getDailyByUserAndValue(user, getDate);
-            Daily getDaily = checkDaily(daily, user, getDate);
-
-            // diary (게시글)
-            Optional<Diary> diary = diaryRepository.findByDaily(getDaily);
-            Diary getDiary = checkDiary(diary, getDaily);
-
-            // photoList  - 할일 1) 태그 처리 하기
-            List<Photo> photoList = photoRepository.findAllByDaily(getDaily);
-            List<GetPhotoRes> photoListRes = checkPhotoList(photoList);
-
-            // 할일 2) post isPublic
-            GetDailyRes getDailyRes = GetDailyRes.of(getDate, getDaily, getDiary, photoListRes);
-            getDailyResList.add(getDailyRes);
-        }
-        return getDailyResList;
+    private GetDailyRes getDailyRes(User user, String date, int i) {
+        String getDate = getDate(date, i); // 날짜 얻기
+        Daily getDaily = getDaily(user, getDate); // daily (날짜)
+        Diary getDiary = getDiary(getDaily); // diary (게시글)
+        List<GetPhotoRes> getPhotoResList = getPhotoList(getDaily); // 날짜 별 사진 얻기
+        return GetDailyRes.of(getDate, getDaily, getDiary, getPhotoResList);
     }
 
     private String getDate(String date, int cnt) {
@@ -127,13 +97,11 @@ public class HomeService {
         return getDate;
     }
 
-    private Daily checkDaily(Optional<Daily> daily, User user, String getDate) {
+    private Daily getDaily(User user, String getDate) {
+        Optional<Daily> daily = dailyReposiotry.getDailyByUserAndValue(user, getDate);
         Daily getDaily;
         if(daily.isEmpty()){
-            Daily createDaily = Daily.builder()
-                    .user(user)
-                    .dailyValue(getDate)
-                    .build();
+            Daily createDaily = Daily.toEntity(user, getDate);
             Daily saveDaily = dailyReposiotry.save(createDaily);
             getDaily = saveDaily;
         }else{
@@ -142,12 +110,11 @@ public class HomeService {
         return getDaily;
     }
 
-    private Diary checkDiary(Optional<Diary> diary, Daily getDaily) {
+    private Diary getDiary(Daily getDaily) {
+        Optional<Diary> diary = diaryRepository.findByDaily(getDaily);
         Diary getDiary;
         if(diary.isEmpty()){
-            Diary createDiary = Diary.builder()
-                    .daily(getDaily)
-                    .build();
+            Diary createDiary = Diary.toEntity(getDaily);
             Diary saveDiary = diaryRepository.save(createDiary);
             getDiary = saveDiary;
         }else{
@@ -156,14 +123,17 @@ public class HomeService {
         return getDiary;
     }
 
-    private List<GetPhotoRes> checkPhotoList(List<Photo> photoList) {
-        List<GetPhotoRes> photoListRes = new ArrayList<>();
+    // - 할일 1) 태그 처리 하기
+    private List<GetPhotoRes> getPhotoList(Daily getDaily) {
+        List<Photo> photoList = photoRepository.findAllByDaily(getDaily);
+        List<GetPhotoRes> getPhotoResList = new ArrayList<>();
         if (photoList.size() != 0) {
             for (Photo getPhoto : photoList) {
                 GetPhotoRes getPhotoRes = GetPhotoRes.of(getPhoto);
-                photoListRes.add(getPhotoRes);
+                getPhotoResList.add(getPhotoRes);
             }
         }
-        return photoListRes;
+        return getPhotoResList;
     }
+
 }

@@ -29,4 +29,12 @@ public class Daily {
         this.user = user;
         this.dailyValue = dailyValue;
     }
+
+    public static Daily toEntity(User user, String getDate) {
+        return Daily.builder()
+                .user(user)
+                .dailyValue(getDate)
+                .build();
+    }
+
 }

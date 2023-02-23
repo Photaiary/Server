@@ -21,7 +21,7 @@ public class GetDailyRes {  // 하루하루의 정보
     private String diaryContent;
 
     @JsonProperty("isPublic")
-    private boolean isPublic;
+    private Boolean isPublic;
 
     // 사진 (5개)
     private List<GetPhotoRes> photoList;
@@ -32,9 +32,14 @@ public class GetDailyRes {  // 하루하루의 정보
                 .date(getDate)
                 .diaryTitle(getDiary.getDiaryTitle())
                 .diaryContent(getDiary.getDiaryContent())
-                .isPublic(true) // 추가 필요함
+                .isPublic(getDiary.isPublic()) // 추가 필요함
                 .photoList(photoListRes)
                 .build();
+    }
+
+    public void changeFrinedDiaryInfo(){
+        this.diaryTitle = null;
+        this.diaryContent = null;
     }
 
 }
