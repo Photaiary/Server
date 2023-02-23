@@ -2,7 +2,7 @@ package com.photaiary.Photaiary.friend.exception;
 
 
 import com.photaiary.Photaiary.friend.exception.custom.AlreadyInitializedExceptionFriend;
-import com.photaiary.Photaiary.friend.exception.custom.ToUserNotFoundExceptionFriend;
+import com.photaiary.Photaiary.friend.exception.custom.NoUserException;
 import com.photaiary.Photaiary.global.exception.ExceptionResponse;
 import lombok.NoArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -22,7 +22,7 @@ public class FriendErrorHandler {//👨‍💻
     }
 
     public ExceptionResponse handleError(){
-        if(exception instanceof ToUserNotFoundExceptionFriend){
+        if(exception instanceof NoUserException){
             return handleUserNotFound();
         } else if (exception instanceof AlreadyInitializedExceptionFriend) {
             return handleAlreadyInitializedException();
