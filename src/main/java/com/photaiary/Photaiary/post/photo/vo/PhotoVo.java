@@ -50,8 +50,8 @@ public class PhotoVo {
             Metadata metadata = ImageMetadataReader.readMetadata(file);
             GpsDirectory gpsDirectory = metadata.getFirstDirectoryOfType(GpsDirectory.class);
 
-            latitude = String.format("%.2f", gpsDirectory.getGeoLocation().getLatitude());
-            longitude = String.format("%.2f", gpsDirectory.getGeoLocation().getLongitude());
+            latitude = String.format("%.6f", gpsDirectory.getGeoLocation().getLatitude());
+            longitude = String.format("%.6f", gpsDirectory.getGeoLocation().getLongitude());
         } catch (IOException e) {
             throw new NoLocationException("파일 입출력에 실패하였습니다. 사유 : " + e.getMessage());
         } catch (ImageProcessingException e) {
