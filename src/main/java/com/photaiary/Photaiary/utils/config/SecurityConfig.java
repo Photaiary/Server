@@ -39,7 +39,7 @@ public class SecurityConfig {
     public WebSecurityCustomizer webSecurityCustomizer() {
         return (web) -> web.ignoring().
                 antMatchers("/swagger-ui/**", "/v3/api-docs/**", "/proxy/**",
-                        "/register","/login", "/test/docker", "/diary/**"); //token 없이 접속
+                        "/register","/login", "/test/docker", "/daily/**"); //token 없이 접속
     }
 
     @Bean
@@ -83,7 +83,7 @@ public class SecurityConfig {
                         "/swagger-ui.html",
                         "/webjars/**" ,
                         /*Probably not needed*/ "/swagger.json").permitAll()
-                .antMatchers("/register", "/login","/h2-console/**","/duplicationCheck","/emailCheck","/refresh", "/diary/**").permitAll()
+                .antMatchers("/register", "/login","/h2-console/**","/duplicationCheck","/emailCheck","/refresh", "/daily/**").permitAll()
                 // /admin으로 시작하는 요청은 ADMIN 권한이 있는 유저에게만 허용
                 .antMatchers("/admin/**").hasRole("ADMIN")
                 // /user 로 시작하는 요청은 USER 권한이 있는 유저에게만 허용

@@ -18,7 +18,7 @@ import java.util.Optional;
 //@Api(tags={"4.친구 관련 API"}, description = "FriendController")
 @RestController
 @RequiredArgsConstructor
-@Api(tags ="4. 친구 관련 API")
+//@Api(tags ="4. 친구 관련 API")
 public class FriendController {
 
 

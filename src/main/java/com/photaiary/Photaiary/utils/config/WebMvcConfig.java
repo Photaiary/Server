@@ -64,6 +64,4 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 .licenseUrl("http://3.34.242.12:8085/api")
                 .build();
     }
-
 }
-
