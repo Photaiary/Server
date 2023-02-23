@@ -1,6 +1,7 @@
 package com.photaiary.Photaiary.friend.entity;
 
 import com.photaiary.Photaiary.user.entity.User;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -21,7 +22,13 @@ public class Friend {
     @JoinColumn(name = "to_user")
     private User toUser;
 
-    @Enumerated(EnumType.STRING)
-    @Column(columnDefinition = "varchar(9) default 'ACTIVE'")
-    private StatusType status;
+//    @Enumerated(EnumType.STRING)
+//    @Column(columnDefinition = "varchar(9) default 'ACTIVE'")
+//    private StatusType status;
+
+    @Builder
+    public Friend(User fromUser, User toUser) {
+        this.fromUser = fromUser;
+        this.toUser = toUser;
+    }
 }

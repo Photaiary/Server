@@ -1,8 +1,10 @@
 package com.photaiary.Photaiary.post;
 
 import com.photaiary.Photaiary.post.diary.Diary;
-import com.photaiary.Photaiary.post.diary.DiaryPostRequestDto;
-import com.photaiary.Photaiary.post.diary.DiaryService;
+import com.photaiary.Photaiary.post.diary.dto.DiaryPostRequestDto;
+import com.photaiary.Photaiary.post.diary.dto.DiarySecretDto;
+import com.photaiary.Photaiary.post.diary.dto.DiaryUpdateRequestDto;
+import com.photaiary.Photaiary.post.diary.service.DiaryService;
 import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -21,29 +23,57 @@ public class PostController {
     private final DiaryService diaryService;
     private int status;
 
-    @PostMapping("/daily/{dailyIndex}/diary")
-    public Map<Integer, Object> postDiary(@PathVariable Long dailyIndex, @RequestBody DiaryPostRequestDto requestDto) {
-
-        Diary postedDiary = diaryService.save(requestDto);
-
+    @PostMapping("/daily/diary") //index 삭제
+    public ResponseEntity<Map<Integer, Object>> postDiary(@RequestBody DiaryPostRequestDto requestDto) throws Exception{
         Map<Integer, Object> response = new HashMap<>();
         Map<String, Object> data = new HashMap<>();
 
-        if (postedDiary.getDiaryIndex() == null) {
-            status = HttpStatus.BAD_REQUEST.value();
-            data.put("success", "false");
-            response.put(status, data);
-        } else if (postedDiary.getDiaryIndex() != null) {
-            status = HttpStatus.OK.value();
-            data.put("success", "true");
-            response.put(status, data);
-        }
-        return response;
+        diaryService.save(requestDto);
+
+        status = HttpStatus.OK.value();
+        data.put("success", "true");
+        response.put(status, data);
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    @GetMapping("/daily/{dailyIndex}/diary")
-    public List<Diary> findAll(@PathVariable Long dailyIndex) {
-        return diaryService.findAll();
+    @PutMapping("/daily/{dailyIndex}")
+    public ResponseEntity<Map<Integer, Object>> updateDiary(@PathVariable Long dailyIndex, @RequestBody DiaryUpdateRequestDto requestDto) throws Exception{
+        Map<Integer, Object> response = new HashMap<>();
+        Map<String, Object> data = new HashMap<>();
+
+        diaryService.update(dailyIndex, requestDto);
+
+        status = HttpStatus.OK.value();
+        data.put("success", "true");
+        response.put(status, data);
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
+    @PostMapping("/diary/lock/{dailyIndex}")
+    public ResponseEntity<Map<Integer, Object>> updateLockState(@PathVariable Long dailyIndex) throws Exception{
+        Map<Integer, Object> response = new HashMap<>();
+        Map<String, Object> data = new HashMap<>();
+
+        Diary diary = diaryService.updateLockState(dailyIndex);
+
+        data.put("lock",diary.isPublic());
+        data.put("isSuccess", "true");
+        response.put(HttpStatus.OK.value(),data);
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
 }
+
+/**
+ * 성공 :
+ * 200:{
+ *    "isSuccess":true,
+ *    "lock": "false"
+ * }
+ * 실패:
+ * 400:{
+ *    "isSuccess":"false"
+ * }
+ */

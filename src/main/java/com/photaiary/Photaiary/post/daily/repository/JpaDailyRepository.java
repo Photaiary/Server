@@ -9,7 +9,7 @@ import java.util.Optional;
 
 @NoArgsConstructor
 @Repository
-public abstract class JpaDailyRepository implements DailyReposiotry{
+public abstract class JpaDailyRepository implements DailyReposiotry, DailyCustomRepository{
     private EntityManager em;
 
     @Override

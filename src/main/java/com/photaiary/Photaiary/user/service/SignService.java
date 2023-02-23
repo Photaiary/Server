@@ -9,6 +9,8 @@ import com.photaiary.Photaiary.user.entity.UserRepository;
 import com.photaiary.Photaiary.user.security.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,6 +32,9 @@ public class SignService {
     private final RefreshTokenRepository refreshTokenRepository;
 
     private final JpaUserDetailsService userDetailsService;
+
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+
 
     public TokenDto login(LoginDto request) throws Exception {
         User user = userRepository.findByEmail(request.getEmail()).orElseThrow(() ->
@@ -59,20 +64,34 @@ public class SignService {
         return signResponseDto.getToken();
     }
 
-    public TokenDto validateRefreshToken(String refreshToken)throws Exception{
-        RefreshToken refreshToken1=refreshTokenRepository.findByRefreshToken(refreshToken).orElseThrow(() ->
+    public boolean logout() throws Exception{
+
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+         Optional<User> findUser = userRepository.findByEmail(auth.getName());
+        User user=findUser.orElseThrow(() -> new Exception("계정을 찾을 수 없습니다."));
+
+        refreshTokenRepository.deleteByKeyEmail(user.getEmail());
+        return true;
+    }
+
+    public String passwordEncoding(String password){
+        return passwordEncoder.encode(password);
+    }
+    public TokenDto validateRefreshToken(String refreshToken) throws Exception {
+        RefreshToken refreshToken1 = refreshTokenRepository.findByRefreshToken(refreshToken).orElseThrow(() ->
                 new BadCredentialsException("refreshToken 찾을 수 없음"));
         return jwtProvider.validateRefreshToken(refreshToken);
     }
+
     public boolean register(SignRequestDto request) throws Exception {
         try {
             User user = User.builder()
-                    .password(passwordEncoder.encode(request.getPassword()))
+                    .password(passwordEncoding(request.getPassword()))
                     .name(request.getName())
                     .nickname(request.getNickname())
                     .email(request.getEmail())
                     .birthdate(request.getBirthdate())
-                    .profileImage(request.getProfileImage())
                     .build();
 
             user.setRoles(Collections.singletonList(Authority.builder().name("ROLE_USER").build()));
@@ -85,7 +104,90 @@ public class SignService {
         return true;
     }
 
+    public SignResponseDto getUser(String email) throws Exception {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new Exception("계정을 찾을 수 없습니다."));
+        return new SignResponseDto(user);
+    }
 
+    @Transactional
+    public String idChk(String nickname) {
+        Optional<User> result = userRepository.findByNickname(nickname);
+        if (result.isPresent())
+            return "false";
+        else return "true";
+    }
+
+    @Transactional
+    public String[] updateTheme(String theme) throws Exception {
+        String email = jwtAuthenticationFilter.getEmail();
+        System.out.println("service에서 보내는 이메일 정보=" + email);
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new Exception("계정을 찾을 수 없습니다."));
+        System.out.println("service에서 보내는 theme정보=" + theme);
+
+        return user.updateTheme(theme);
+    }
+
+    @Transactional
+    public String updateNickname(String nickname) throws Exception {
+
+        String res = this.idChk(nickname);
+
+        if (res.equals("사용 가능")) {
+            String email = jwtAuthenticationFilter.getEmail();
+            User user = userRepository.findByEmail(email).orElseThrow(() -> new Exception("계정을 찾을 수 없습니다."));
+            return user.updateNickname(nickname);
+
+        } else if (res.equals("이미 사용 중"))
+            return ("이미 사용 중인 아이디");
+        else throw new Exception("변경 실패");
+    }
+    @Transactional
+    public boolean updateBirthdate(String birthdate) throws Exception {
+        String email = jwtAuthenticationFilter.getEmail();
+//        System.out.println("service에서 보내는 이메일 정보=" + email);
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new Exception("계정을 찾을 수 없습니다."));
+
+        return user.updateBirthdate(birthdate);
+    }
+    @Transactional
+    public boolean updateName(String name) throws Exception {
+
+//        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+//        Optional<User> user = userRepository.findByEmail(auth.getName());
+//
+        String email = jwtAuthenticationFilter.getEmail();
+//        System.out.println("service에서 보내는 이메일 정보=" + email);
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new Exception("계정을 찾을 수 없습니다."));
+
+        return user.updateName(name);
+    }
+
+    @Transactional
+    public boolean updatePassword(String password) throws Exception {
+        String email = jwtAuthenticationFilter.getEmail();
+//        System.out.println("service에서 보내는 이메일 정보=" + email);
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new Exception("계정을 찾을 수 없습니다."));
+        String encodedPassword=this.passwordEncoding(password);
+        return user.updatePassword(encodedPassword);
+    }
+
+
+    @Transactional
+    public boolean withdraw(LoginDto request) throws Exception {
+        User user = userRepository.findByEmail(request.getEmail()).orElseThrow(() -> new Exception("회원이 존재하지 않습니다"));
+
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+            throw new BadCredentialsException("잘못된 계정정보입니다.");
+        }
+
+       userRepository.delete(user);
+        return true;
+
+    }
+
+
+}
 
 
 //    public String createRefreshToken(User user) {
@@ -150,25 +252,3 @@ public class SignService {
 //            throw new Exception("로그인을 해주세요");
 //        }
 //    }
-
-    public SignResponseDto getUser(String email) throws Exception {
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new Exception("계정을 찾을 수 없습니다."));
-        return new SignResponseDto(user);
-    }
-
-    @Transactional
-    public String idChk(String nickname){
-        Optional<User> result = userRepository.findByNickname(nickname);
-        if (result.isPresent())
-            return "이미 사용 중";
-        else return "사용 가능";
-    }
-
-//    @Transactional
-//    public String updateTheme(String theme){
-//
-//    }
-
-
-}

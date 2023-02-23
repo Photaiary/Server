@@ -1,7 +1,7 @@
 package com.photaiary.Photaiary.post.daily.repository;
 
 import com.photaiary.Photaiary.post.daily.entity.Daily;
-import com.photaiary.Photaiary.post.photo.entity.Photo;
+
 import com.photaiary.Photaiary.user.entity.User;
 import lombok.RequiredArgsConstructor;
 
@@ -9,6 +9,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import java.util.List;
 import java.util.Optional;
+
 @RequiredArgsConstructor
 public class DailyCustomRepositoryImpl implements DailyCustomRepository{
     private final EntityManager em;
@@ -21,4 +22,5 @@ public class DailyCustomRepositoryImpl implements DailyCustomRepository{
         List<Daily> dailies = query.getResultList();
         return dailies.stream().findAny();
     }
+
 }
