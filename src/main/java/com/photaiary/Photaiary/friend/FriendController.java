@@ -71,7 +71,7 @@ public class FriendController {
 
     @GetMapping("/friend/search/{keyword}")
     public ResponseEntity<Map<Integer,Object>> searchFriends(@PathVariable String keyword) throws Exception{
-        List<String> searchedFriends = service.findByNicknameStartingWith(keyword);
+        String searchedFriends = service.findByNicknameStartingWith(keyword);//🔨
 
         Map<Integer, Object> response = new HashMap<>();
         Map<String, Object> data = new HashMap<>();
