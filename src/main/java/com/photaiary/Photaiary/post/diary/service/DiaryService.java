@@ -61,7 +61,7 @@ public class DiaryService {
 
         Diary diary = diaryRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("해당 게시글이 없습니다. id=" + id));
 
-        diary.update(requestDto.getDiaryTitle(), requestDto.getDiaryContent());
+        diary.update(requestDto.getDiaryTitle(), requestDto.getDiaryContent(), requestDto.getIsPublic());
 
         return id;
     }

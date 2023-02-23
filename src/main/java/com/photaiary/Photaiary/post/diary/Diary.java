@@ -33,9 +33,10 @@ public class Diary {
         this.diaryContent = diaryContent;
     }
 
-    public void update(String diaryTitle, String diaryContent) {
+    public void update(String diaryTitle, String diaryContent, Boolean isPublic) {
         this.diaryTitle = diaryTitle;
         this.diaryContent = diaryContent;
+        this.isPublic = isPublic;
     }
 
     public boolean updateLockState(boolean isPublic){

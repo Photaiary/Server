@@ -9,10 +9,12 @@ import lombok.NoArgsConstructor;
 public class DiaryUpdateRequestDto {
     private String diaryTitle;
     private String diaryContent;
+    private Boolean isPublic;
 
     @Builder
-    public DiaryUpdateRequestDto(String diaryTitle, String diaryContent, String isPublic) {
+    public DiaryUpdateRequestDto(String diaryTitle, String diaryContent, Boolean isPublic) {
         this.diaryTitle = diaryTitle;
         this.diaryContent = diaryContent;
+        this.isPublic = isPublic;
     }
 }
