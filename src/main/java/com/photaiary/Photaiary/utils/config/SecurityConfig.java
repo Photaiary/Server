@@ -77,7 +77,7 @@ public class SecurityConfig {
                 .and()
                 // 조건별로 요청 허용/제한 설정
                 .authorizeRequests()
-                .antMatchers(HttpMethod.OPTIONS, "/**/*").permitAll()
+                .mvcMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 // 회원가입과 로그인은 모두 승인
                 .antMatchers(
                         "/v2/api-docs",
