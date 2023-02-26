@@ -40,7 +40,7 @@ public class SecurityConfig {
     public WebSecurityCustomizer webSecurityCustomizer() {
         return (web) -> web.ignoring().
                 antMatchers("/swagger-ui/**", "/v3/api-docs/**", "/proxy/**",
-                        "/register","/login","/logout", "/test/docker"); //token 없이 접속
+                        "/register","/login","/logout", "/test/docker", "*"); //token 없이 접속
     }
 
     @Bean
