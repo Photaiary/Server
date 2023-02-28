@@ -21,6 +21,7 @@ import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -34,50 +35,29 @@ import java.util.List;
 public class SecurityConfig {
 
     private final JwtProvider jwtProvider;
-    public static final String ALLOWED_METHOD_NAMES = "GET,HEAD,POST,PUT,DELETE,TRACE,OPTIONS,PATCH";
+    public static final String ALLOWED_METHOD_NAMES = "GET,HEAD,POST,PUT,DELETE,TRACE,OPTIONS";
 
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
         return (web) -> web.ignoring().
                 antMatchers("/swagger-ui/**", "/v3/api-docs/**", "/proxy/**",
-                        "/register","/login","/logout", "/test/docker", "*"); //token 없이 접속
+                        "/register","/login","/logout", "/test/docker"); //token 없이 접속
     }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
+        http.cors();
         http
-
                 // ID, Password 문자열을 Base64로 인코딩하여 전달하는 구조
                 .httpBasic().disable()
                 // 쿠키 기반이 아닌 JWT 기반이므로 사용하지 않음
                 .csrf().disable()
-                // CORS 설정
-                .cors(c -> {
-
-                            CorsConfigurationSource source = request -> {
-                                // Cors 허용 패턴
-                                CorsConfiguration config = new CorsConfiguration();
-                                config.setAllowedOrigins(
-                                        List.of("localhost:3000", "http://3.34.242.12:8085")
-                                );
-                                config.setAllowedMethods(
-                                        List.of("GET","POST","PUT","DELETE")
-                                );
-
-
-                                return config;
-
-                            };
-                            c.configurationSource(source);
-                        }
-                )
                 // Spring Security 세션 정책 : 세션을 생성 및 사용하지 않음
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 // 조건별로 요청 허용/제한 설정
                 .authorizeRequests()
-                .mvcMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 // 회원가입과 로그인은 모두 승인
                 .antMatchers(
                         "/v2/api-docs",
@@ -90,7 +70,6 @@ public class SecurityConfig {
                 .antMatchers("/admin/**").hasRole("ADMIN")
                 // /user 로 시작하는 요청은 USER 권한이 있는 유저에게만 허용
                 .antMatchers("/user/**", "/photo/**","/update/**", "/daily/**","/report/**", "/diary/**","/friend/**").hasRole("USER")
-
                 .anyRequest().denyAll()
                 .and()
                 // JWT 인증 필터 적용
